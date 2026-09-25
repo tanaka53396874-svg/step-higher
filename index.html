@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+  <title>STEP HIGHER</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #f3f5f7;
+      color: #222;
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Helvetica Neue",
+        Arial,
+        sans-serif;
+    }
+
+    .app {
+      max-width: 520px;
+      margin: 0 auto;
+      padding: 22px 16px 50px;
+    }
+
+    h1 {
+      margin: 8px 0 4px;
+      text-align: center;
+      font-size: 30px;
+      letter-spacing: 2px;
+    }
+
+    .subtitle {
+      margin-bottom: 22px;
+      text-align: center;
+      color: #777;
+      font-size: 13px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 18px;
+      margin-bottom: 14px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+    }
+
+    .label {
+      color: #777;
+      font-size: 13px;
+      margin-bottom: 5px;
+    }
+
+    .big-number {
+      font-size: 34px;
+      font-weight: 700;
+    }
+
+    .unit {
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    .target-name {
+      font-size: 23px;
+      font-weight: 700;
+      margin-top: 5px;
+    }
+
+    .target-info {
+      margin-top: 8px;
+      color: #666;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 15px;
+      margin-top: 14px;
+      background: #e5e5e5;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      width: 0%;
+      height: 100%;
+      background: #333;
+      transition: width 0.3s;
+    }
+
+    .counts {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .count-box {
+      text-align: center;
+      padding: 8px;
+    }
+
+    .count-title {
+      color: #777;
+      font-size: 13px;
+    }
+
+    .count-number {
+      margin-top: 4px;
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    button {
+      width: 100%;
+      border: 0;
+      border-radius: 13px;
+      padding: 15px;
+      margin-top: 10px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .primary {
+      background: #222;
+      color: white;
+    }
+
+    .secondary {
+      background: #e5e7ea;
+      color: #222;
+    }
+
+    button:disabled {
+      opacity: 0.45;
+      cursor: default;
+    }
+
+    .login {
+      margin-top: 18px;
+    }
+
+    input {
+      width: 100%;
+      padding: 13px;
+      margin-top: 9px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+
+    .status {
+      margin-top: 12px;
+      text-align: center;
+      color: #777;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .error {
+      color: #c62828;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <h1>STEP HIGHER</h1>
+  <div class="subtitle">
+    歩いて世界の建造物と山を制覇
+  </div>
+
+
+  <!-- ログイン画面 -->
+
+  <div id="loginArea" class="card login">
+
+    <div class="label">
+      Supabaseにログイン
+    </div>
+
+    <input
+      id="email"
+      type="email"
+      placeholder="メールアドレス">
+
+    <input
+      id="password"
+      type="password"
+      placeholder="パスワード">
+
+    <button
+      class="primary"
+      onclick="login()">
+      ログイン
+    </button>
+
+    <div
+      id="loginStatus"
+      class="status">
+    </div>
+
+  </div>
+
+
+  <!-- メイン画面 -->
+
+  <div id="mainArea" class="hidden">
+
+
+    <!-- 今日の歩数 -->
+
+    <div class="card">
+
+      <div class="label">
+        今日の歩数
+      </div>
+
+      <div class="big-number">
+        <span id="todaySteps">0</span>
+        <span class="unit">歩</span>
+      </div>
+
+    </div>
+
+
+    <!-- 制覇数 -->
+
+    <div class="card">
+
+      <div class="label">
+        制覇数
+      </div>
+
+      <div class="big-number">
+        <span id="completedTotal">0</span>
+        <span class="unit">/ 100</span>
+      </div>
+
+      <div class="counts">
+
+        <div class="count-box">
+          <div class="count-title">
+            建造物
+          </div>
+
+          <div class="count-number">
+            <span id="completedBuildings">0</span>
+            / 50
+          </div>
+        </div>
+
+        <div class="count-box">
+          <div class="count-title">
+            山
+          </div>
+
+          <div class="count-number">
+            <span id="completedMountains">0</span>
+            / 50
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- 現在の挑戦 -->
+
+    <div class="card">
+
+      <div class="label">
+        現在の挑戦
+      </div>
+
+      <div
+        id="currentTargetName"
+        class="target-name">
+        まだ選択されていません
+      </div>
+
+      <div
+        id="currentTargetInfo"
+        class="target-info">
+      </div>
+
+      <div
+        id="progressBar"
+        class="progress-bar hidden">
+
+        <div
+          id="progressFill"
+          class="progress-fill">
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- 持ち越し -->
+
+    <div class="card">
+
+      <div class="label">
+        持ち越し歩数
+      </div>
+
+      <div class="big-number">
+        <span id="carrySteps">0</span>
+        <span class="unit">歩</span>
+      </div>
+
+    </div>
+
+
+    <!-- 選択 -->
+
+    <div class="card">
+
+      <button
+        id="manualButton"
+        class="primary"
+        disabled>
+        自分で選ぶ
+      </button>
+
+      <button
+        id="randomButton"
+        class="secondary"
+        disabled>
+        ランダムで選ぶ
+      </button>
+
+      <div class="status">
+        選択機能は次の段階で有効にします
+      </div>
+
+    </div>
+
+
+    <div
+      id="appStatus"
+      class="status">
+    </div>
+
+  </div>
+
+</div>
+
+
+<script>
+
+  // ==========================================
+  // Supabase設定
+  // ==========================================
+
+  const SUPABASE_URL =
+    "ここにProject URL";
+
+  const SUPABASE_KEY =
+    "ここにPublishable key";
+
+
+  const sb = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+
+  // ==========================================
+  // 初期処理
+  // ==========================================
+
+  document.addEventListener(
+    "DOMContentLoaded",
+    async () => {
+
+      const {
+        data: { session }
+      } = await sb.auth.getSession();
+
+      if (session) {
+        showMain();
+        await loadData();
+      }
+
+    }
+  );
+
+
+  // ==========================================
+  // ログイン
+  // ==========================================
+
+  async function login() {
+
+    const email =
+      document.getElementById("email").value.trim();
+
+    const password =
+      document.getElementById("password").value;
+
+    const status =
+      document.getElementById("loginStatus");
+
+    status.className = "status";
+    status.textContent = "ログイン中...";
+
+
+    const {
+      data,
+      error
+    } = await sb.auth.signInWithPassword({
+      email: email,
+      password: password
+    });
+
+
+    if (error) {
+
+      status.className =
+        "status error";
+
+      status.textContent =
+        "ログインできませんでした";
+
+      console.error(error);
+
+      return;
+    }
+
+
+    status.textContent = "";
+
+    showMain();
+
+    await loadData();
+
+  }
+
+
+  // ==========================================
+  // メイン画面表示
+  // ==========================================
+
+  function showMain() {
+
+    document
+      .getElementById("loginArea")
+      .classList.add("hidden");
+
+    document
+      .getElementById("mainArea")
+      .classList.remove("hidden");
+
+  }
+
+
+  // ==========================================
+  // データ読み込み
+  // ==========================================
+
+  async function loadData() {
+
+    const status =
+      document.getElementById("appStatus");
+
+    status.className = "status";
+    status.textContent =
+      "データを読み込んでいます...";
+
+
+    const {
+      data: { user },
+      error: userError
+    } = await sb.auth.getUser();
+
+
+    if (userError || !user) {
+
+      showError(
+        "ユーザー情報を取得できませんでした"
+      );
+
+      return;
+    }
+
+
+    // 今日の日付（日本時間）
+
+    const today =
+      new Intl.DateTimeFormat(
+        "en-CA",
+        {
+          timeZone: "Asia/Tokyo",
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit"
+        }
+      )
+      .format(new Date());
+
+
+    // ------------------------------------------
+    // 今日の歩数
+    // ------------------------------------------
+
+    const {
+      data: stepData,
+      error: stepError
+    } = await sb
+      .from("daily_steps")
+      .select("steps")
+      .eq("user_id", user.id)
+      .eq("step_date", today)
+      .maybeSingle();
+
+
+    if (stepError) {
+
+      console.error(stepError);
+
+      showError(
+        "歩数データを取得できませんでした"
+      );
+
+      return;
+    }
+
+
+    document
+      .getElementById("todaySteps")
+      .textContent =
+        Number(
+          stepData?.steps ?? 0
+        ).toLocaleString();
+
+
+    // ------------------------------------------
+    // game_progress
+    // ------------------------------------------
+
+    const {
+      data: progress,
+      error: progressError
+    } = await sb
+      .from("game_progress")
+      .select(`
+        cycle,
+        current_target_id,
+        current_steps,
+        carry_steps,
+        random_pass_used
+      `)
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+
+    if (progressError) {
+
+      console.error(progressError);
+
+      showError(
+        "ゲーム進行データを取得できませんでした"
+      );
+
+      return;
+    }
+
+
+    document
+      .getElementById("carrySteps")
+      .textContent =
+        Number(
+          progress?.carry_steps ?? 0
+        ).toLocaleString();
+
+
+    // ------------------------------------------
+    // クリア履歴
+    // ------------------------------------------
+
+    const cycle =
+      progress?.cycle ?? 1;
+
+
+    const {
+      data: completions,
+      error: completionError
+    } = await sb
+      .from("target_completions")
+      .select(`
+        target_id,
+        targets (
+          category
+        )
+      `)
+      .eq("user_id", user.id)
+      .eq("cycle", cycle);
+
+
+    if (completionError) {
+
+      console.error(completionError);
+
+      showError(
+        "クリア履歴を取得できませんでした"
+      );
+
+      return;
+    }
+
+
+    const completed =
+      completions ?? [];
+
+
+    let buildingCount = 0;
+    let mountainCount = 0;
+
+
+    for (const item of completed) {
+
+      if (
+        item.targets?.category ===
+        "building"
+      ) {
+        buildingCount++;
+      }
+
+      if (
+        item.targets?.category ===
+        "mountain"
+      ) {
+        mountainCount++;
+      }
+
+    }
+
+
+    document
+      .getElementById("completedTotal")
+      .textContent =
+        completed.length;
+
+
+    document
+      .getElementById("completedBuildings")
+      .textContent =
+        buildingCount;
+
+
+    document
+      .getElementById("completedMountains")
+      .textContent =
+        mountainCount;
+
+
+    // ------------------------------------------
+    // 現在の挑戦
+    // ------------------------------------------
+
+    if (progress?.current_target_id) {
+
+      const {
+        data: target,
+        error: targetError
+      } = await sb
+        .from("targets")
+        .select(`
+          name_ja,
+          height_m,
+          required_steps
+        `)
+        .eq(
+          "id",
+          progress.current_target_id
+        )
+        .single();
+
+
+      if (targetError) {
+
+        console.error(targetError);
+
+        showError(
+          "挑戦中の目標を取得できませんでした"
+        );
+
+        return;
+      }
+
+
+      document
+        .getElementById(
+          "currentTargetName"
+        )
+        .textContent =
+          target.name_ja;
+
+
+      const currentSteps =
+        Number(
+          progress.current_steps ?? 0
+        );
+
+
+      const requiredSteps =
+        Number(
+          target.required_steps
+        );
+
+
+      const remaining =
+        Math.max(
+          requiredSteps - currentSteps,
+          0
+        );
+
+
+      document
+        .getElementById(
+          "currentTargetInfo"
+        )
+        .innerHTML =
+          `
+          高さ：
+          ${Number(target.height_m).toLocaleString()}m
+          <br>
+
+          ${currentSteps.toLocaleString()}
+          /
+          ${requiredSteps.toLocaleString()}歩
+          <br>
+
+          あと
+          ${remaining.toLocaleString()}歩
+          `;
+
+
+      const ratio =
+        Math.min(
+          currentSteps /
+          requiredSteps *
+          100,
+          100
+        );
+
+
+      const bar =
+        document.getElementById(
+          "progressBar"
+        );
+
+
+      bar.classList.remove("hidden");
+
+
+      document
+        .getElementById(
+          "progressFill"
+        )
+        .style.width =
+          ratio + "%";
+
+    } else {
+
+      document
+        .getElementById(
+          "currentTargetName"
+        )
+        .textContent =
+          "まだ選択されていません";
+
+
+      document
+        .getElementById(
+          "currentTargetInfo"
+        )
+        .textContent = "";
+
+
+      document
+        .getElementById(
+          "progressBar"
+        )
+        .classList.add("hidden");
+
+    }
+
+
+    status.textContent =
+      "Supabaseとの接続は正常です";
+
+  }
+
+
+  // ==========================================
+  // エラー表示
+  // ==========================================
+
+  function showError(message) {
+
+    const status =
+      document.getElementById(
+        "appStatus"
+      );
+
+    status.className =
+      "status error";
+
+    status.textContent =
+      message;
+
+  }
+
+</script>
+
+</body>
+</html>

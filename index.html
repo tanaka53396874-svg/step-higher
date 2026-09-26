@@ -142,6 +142,12 @@
       color: #222;
     }
 
+    .pass-button {
+      background: #fff;
+      color: #222;
+      border: 2px solid #222;
+    }
+
     button:disabled {
       opacity: 0.45;
       cursor: default;
@@ -175,10 +181,6 @@
     .hidden {
       display: none !important;
     }
-
-    /* ========================================
-       目標選択画面
-       ======================================== */
 
     .screen-title {
       font-size: 25px;
@@ -258,10 +260,6 @@
       margin-bottom: 15px;
     }
 
-    /* ========================================
-       確認画面
-       ======================================== */
-
     .confirm-box {
       text-align: center;
       padding: 10px 0;
@@ -284,6 +282,26 @@
       font-size: 17px;
       font-weight: 700;
     }
+
+    .random-badge {
+      display: inline-block;
+      padding: 5px 10px;
+      margin-bottom: 8px;
+      background: #e5e7ea;
+      border-radius: 10px;
+      color: #555;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .must-challenge {
+      margin-top: 14px;
+      padding: 10px;
+      background: #f0f0f0;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+    }
   </style>
 </head>
 
@@ -291,9 +309,7 @@
 
 <div class="app">
 
-  <!-- ======================================
-       ログイン画面
-       ====================================== -->
+  <!-- ログイン画面 -->
 
   <div id="loginScreen">
 
@@ -303,7 +319,7 @@
       歩いて世界の建造物と山を制覇
     </div>
 
-    <div id="loginArea" class="card login">
+    <div class="card login">
 
       <div class="label">
         Supabaseにログイン
@@ -335,9 +351,7 @@
   </div>
 
 
-  <!-- ======================================
-       トップ画面
-       ====================================== -->
+  <!-- トップ画面 -->
 
   <div id="mainScreen" class="hidden">
 
@@ -375,24 +389,16 @@
       <div class="counts">
 
         <div class="count-box">
-          <div class="count-title">
-            建造物
-          </div>
-
+          <div class="count-title">建造物</div>
           <div class="count-number">
-            <span id="completedBuildings">0</span>
-            / 50
+            <span id="completedBuildings">0</span> / 50
           </div>
         </div>
 
         <div class="count-box">
-          <div class="count-title">
-            山
-          </div>
-
+          <div class="count-title">山</div>
           <div class="count-number">
-            <span id="completedMountains">0</span>
-            / 50
+            <span id="completedMountains">0</span> / 50
           </div>
         </div>
 
@@ -458,7 +464,7 @@
       <button
         id="randomButton"
         class="secondary"
-        disabled>
+        onclick="openRandomTarget()">
         ランダムで選ぶ
       </button>
 
@@ -469,7 +475,6 @@
 
     </div>
 
-
     <div
       id="appStatus"
       class="status">
@@ -478,9 +483,7 @@
   </div>
 
 
-  <!-- ======================================
-       目標一覧画面
-       ====================================== -->
+  <!-- 手動選択画面 -->
 
   <div id="targetScreen" class="hidden">
 
@@ -527,9 +530,7 @@
   </div>
 
 
-  <!-- ======================================
-       挑戦確認画面
-       ====================================== -->
+  <!-- 手動選択確認 -->
 
   <div id="confirmScreen" class="hidden">
 
@@ -574,14 +575,83 @@
 
   </div>
 
+
+  <!-- ランダム選択画面 -->
+
+  <div id="randomScreen" class="hidden">
+
+    <button
+      id="randomBackButton"
+      class="secondary back-button"
+      onclick="cancelRandomSelection()">
+      ← 戻る
+    </button>
+
+    <div class="screen-title">
+      ランダムチャレンジ
+    </div>
+
+    <div class="card confirm-box">
+
+      <div
+        id="randomBadge"
+        class="random-badge">
+        ランダム抽選
+      </div>
+
+      <div
+        id="randomName"
+        class="confirm-name">
+      </div>
+
+      <div
+        id="randomDetails"
+        class="confirm-details">
+      </div>
+
+      <div
+        id="randomQuestion"
+        class="confirm-question">
+        この目標に挑戦しますか？
+      </div>
+
+      <div
+        id="mustChallengeMessage"
+        class="must-challenge hidden">
+        パスを使用済みです。この目標に挑戦します。
+      </div>
+
+      <button
+        id="randomChallengeButton"
+        class="primary"
+        onclick="startRandomChallenge()">
+        挑戦する
+      </button>
+
+      <button
+        id="passButton"
+        class="pass-button"
+        onclick="passRandomTarget()">
+        1回だけパス
+      </button>
+
+    </div>
+
+    <div
+      id="randomStatus"
+      class="status">
+    </div>
+
+  </div>
+
 </div>
 
 
 <script>
 
   // ==========================================
-  // Supabase設定
-  // ★ここだけ自分の値に置き換える
+  // Supabase
+  // ★現在使っている実際の値に置き換える
   // ==========================================
 
   const SUPABASE_URL =
@@ -590,15 +660,15 @@
   const SUPABASE_KEY =
     "sb_publishable_2m9HkObR_Nf_-OxtpLHb4Q_-uROIako";
 
-
-  const sb = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-  );
+  const sb =
+    window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY
+    );
 
 
   // ==========================================
-  // アプリ内データ
+  // アプリデータ
   // ==========================================
 
   let currentUser = null;
@@ -607,9 +677,12 @@
 
   let allTargets = [];
 
-  let completedTargetIds = new Set();
+  let completedTargetIds =
+    new Set();
 
   let selectedTarget = null;
+
+  let randomTarget = null;
 
   let currentFilter = "all";
 
@@ -624,13 +697,18 @@
 
       const {
         data: { session }
-      } = await sb.auth.getSession();
+      } =
+        await sb.auth.getSession();
+
 
       if (session) {
 
-        currentUser = session.user;
+        currentUser =
+          session.user;
 
-        showScreen("mainScreen");
+        showScreen(
+          "mainScreen"
+        );
 
         await loadData();
 
@@ -647,45 +725,69 @@
   async function login() {
 
     const email =
-      document.getElementById("email").value.trim();
+      document
+        .getElementById("email")
+        .value
+        .trim();
+
 
     const password =
-      document.getElementById("password").value;
+      document
+        .getElementById("password")
+        .value;
+
 
     const status =
-      document.getElementById("loginStatus");
+      document
+        .getElementById(
+          "loginStatus"
+        );
 
-    status.className = "status";
-    status.textContent = "ログイン中...";
+
+    status.className =
+      "status";
+
+    status.textContent =
+      "ログイン中...";
 
 
     const {
       data,
       error
-    } = await sb.auth.signInWithPassword({
-      email,
-      password
-    });
+    } =
+      await sb.auth
+        .signInWithPassword({
+          email,
+          password
+        });
 
 
     if (error) {
 
-      status.className = "status error";
+      console.error(error);
+
+      status.className =
+        "status error";
 
       status.textContent =
         "ログインできませんでした";
 
-      console.error(error);
-
       return;
+
     }
 
 
-    currentUser = data.user;
+    currentUser =
+      data.user;
+
 
     status.textContent = "";
 
-    showScreen("mainScreen");
+
+    showScreen(
+      "mainScreen"
+    );
+
 
     await loadData();
 
@@ -693,45 +795,65 @@
 
 
   // ==========================================
-  // 画面切り替え
+  // 画面切替
   // ==========================================
 
-  function showScreen(screenId) {
+  function showScreen(
+    screenId
+  ) {
 
     const screens = [
       "loginScreen",
       "mainScreen",
       "targetScreen",
-      "confirmScreen"
+      "confirmScreen",
+      "randomScreen"
     ];
 
-    for (const id of screens) {
+
+    for (
+      const id of screens
+    ) {
 
       document
         .getElementById(id)
-        .classList.add("hidden");
+        .classList
+        .add("hidden");
 
     }
 
-    document
-      .getElementById(screenId)
-      .classList.remove("hidden");
 
-    window.scrollTo(0, 0);
+    document
+      .getElementById(
+        screenId
+      )
+      .classList
+      .remove("hidden");
+
+
+    window.scrollTo(
+      0,
+      0
+    );
 
   }
 
 
   // ==========================================
-  // 全データ読み込み
+  // データ読み込み
   // ==========================================
 
   async function loadData() {
 
     const status =
-      document.getElementById("appStatus");
+      document
+        .getElementById(
+          "appStatus"
+        );
 
-    status.className = "status";
+
+    status.className =
+      "status";
 
     status.textContent =
       "データを読み込んでいます...";
@@ -741,7 +863,8 @@
 
       const {
         data: { user }
-      } = await sb.auth.getUser();
+      } =
+        await sb.auth.getUser();
 
       currentUser = user;
 
@@ -759,38 +882,52 @@
     }
 
 
-    // 今日の日付（日本時間）
-
     const today =
       new Intl.DateTimeFormat(
         "en-CA",
         {
-          timeZone: "Asia/Tokyo",
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit"
+          timeZone:
+            "Asia/Tokyo",
+
+          year:
+            "numeric",
+
+          month:
+            "2-digit",
+
+          day:
+            "2-digit"
         }
-      ).format(new Date());
+      ).format(
+        new Date()
+      );
 
 
-    // ------------------------------------------
     // 今日の歩数
-    // ------------------------------------------
 
     const {
       data: stepData,
       error: stepError
-    } = await sb
-      .from("daily_steps")
-      .select("steps")
-      .eq("user_id", currentUser.id)
-      .eq("step_date", today)
-      .maybeSingle();
+    } =
+      await sb
+        .from("daily_steps")
+        .select("steps")
+        .eq(
+          "user_id",
+          currentUser.id
+        )
+        .eq(
+          "step_date",
+          today
+        )
+        .maybeSingle();
 
 
     if (stepError) {
 
-      console.error(stepError);
+      console.error(
+        stepError
+      );
 
       showError(
         "歩数データを取得できませんでした"
@@ -802,36 +939,43 @@
 
 
     document
-      .getElementById("todaySteps")
+      .getElementById(
+        "todaySteps"
+      )
       .textContent =
         Number(
           stepData?.steps ?? 0
         ).toLocaleString();
 
 
-    // ------------------------------------------
     // game_progress
-    // ------------------------------------------
 
     const {
       data: progress,
       error: progressError
-    } = await sb
-      .from("game_progress")
-      .select(`
-        cycle,
-        current_target_id,
-        current_steps,
-        carry_steps,
-        random_pass_used
-      `)
-      .eq("user_id", currentUser.id)
-      .maybeSingle();
+    } =
+      await sb
+        .from("game_progress")
+        .select(`
+          cycle,
+          current_target_id,
+          current_steps,
+          carry_steps,
+          random_pass_used,
+          random_skipped_target_id
+        `)
+        .eq(
+          "user_id",
+          currentUser.id
+        )
+        .maybeSingle();
 
 
     if (progressError) {
 
-      console.error(progressError);
+      console.error(
+        progressError
+      );
 
       showError(
         "ゲーム進行データを取得できませんでした"
@@ -842,7 +986,8 @@
     }
 
 
-    gameProgress = progress;
+    gameProgress =
+      progress;
 
 
     if (!gameProgress) {
@@ -857,37 +1002,43 @@
 
 
     document
-      .getElementById("carrySteps")
+      .getElementById(
+        "carrySteps"
+      )
       .textContent =
         Number(
-          gameProgress.carry_steps ?? 0
+          gameProgress
+            .carry_steps ?? 0
         ).toLocaleString();
 
 
-    // ------------------------------------------
-    // targets 100件
-    // ------------------------------------------
+    // 100目標
 
     const {
       data: targets,
       error: targetsError
-    } = await sb
-      .from("targets")
-      .select(`
-        id,
-        category,
-        name_ja,
-        name_en,
-        country,
-        height_m,
-        required_steps
-      `)
-      .order("id");
+    } =
+      await sb
+        .from("targets")
+        .select(`
+          id,
+          category,
+          name_ja,
+          name_en,
+          country,
+          height_m,
+          required_steps
+        `)
+        .order(
+          "id"
+        );
 
 
     if (targetsError) {
 
-      console.error(targetsError);
+      console.error(
+        targetsError
+      );
 
       showError(
         "目標データを取得できませんでした"
@@ -898,12 +1049,11 @@
     }
 
 
-    allTargets = targets ?? [];
+    allTargets =
+      targets ?? [];
 
 
-    // ------------------------------------------
     // クリア履歴
-    // ------------------------------------------
 
     const cycle =
       gameProgress.cycle ?? 1;
@@ -912,16 +1062,29 @@
     const {
       data: completions,
       error: completionError
-    } = await sb
-      .from("target_completions")
-      .select("target_id")
-      .eq("user_id", currentUser.id)
-      .eq("cycle", cycle);
+    } =
+      await sb
+        .from(
+          "target_completions"
+        )
+        .select(
+          "target_id"
+        )
+        .eq(
+          "user_id",
+          currentUser.id
+        )
+        .eq(
+          "cycle",
+          cycle
+        );
 
 
     if (completionError) {
 
-      console.error(completionError);
+      console.error(
+        completionError
+      );
 
       showError(
         "クリア履歴を取得できませんでした"
@@ -935,35 +1098,44 @@
     completedTargetIds =
       new Set(
         (completions ?? [])
-          .map(item => item.target_id)
+          .map(
+            item =>
+              item.target_id
+          )
       );
 
 
-    // ------------------------------------------
     // 制覇数
-    // ------------------------------------------
 
     let buildingCount = 0;
 
     let mountainCount = 0;
 
 
-    for (const target of allTargets) {
+    for (
+      const target
+      of allTargets
+    ) {
 
       if (
-        !completedTargetIds.has(target.id)
+        !completedTargetIds
+          .has(target.id)
       ) {
         continue;
       }
 
+
       if (
-        target.category === "building"
+        target.category ===
+        "building"
       ) {
         buildingCount++;
       }
 
+
       if (
-        target.category === "mountain"
+        target.category ===
+        "mountain"
       ) {
         mountainCount++;
       }
@@ -972,55 +1144,32 @@
 
 
     document
-      .getElementById("completedTotal")
+      .getElementById(
+        "completedTotal"
+      )
       .textContent =
         completedTargetIds.size;
 
 
     document
-      .getElementById("completedBuildings")
+      .getElementById(
+        "completedBuildings"
+      )
       .textContent =
         buildingCount;
 
 
     document
-      .getElementById("completedMountains")
+      .getElementById(
+        "completedMountains"
+      )
       .textContent =
         mountainCount;
 
 
-    // ------------------------------------------
-    // 現在の挑戦
-    // ------------------------------------------
-
     displayCurrentChallenge();
 
-
-    // 挑戦中は別の目標を選べない
-
-    const manualButton =
-      document.getElementById("manualButton");
-
-    const selectionStatus =
-      document.getElementById(
-        "selectionStatus"
-      );
-
-
-    if (gameProgress.current_target_id) {
-
-      manualButton.disabled = true;
-
-      selectionStatus.textContent =
-        "現在の目標をクリアすると次を選べます";
-
-    } else {
-
-      manualButton.disabled = false;
-
-      selectionStatus.textContent = "";
-
-    }
+    updateSelectionButtons();
 
 
     status.textContent =
@@ -1030,29 +1179,118 @@
 
 
   // ==========================================
-  // 現在の挑戦を表示
+  // 選択ボタン状態
+  // ==========================================
+
+  function updateSelectionButtons() {
+
+    const manualButton =
+      document
+        .getElementById(
+          "manualButton"
+        );
+
+
+    const randomButton =
+      document
+        .getElementById(
+          "randomButton"
+        );
+
+
+    const selectionStatus =
+      document
+        .getElementById(
+          "selectionStatus"
+        );
+
+
+    if (
+      gameProgress
+        ?.current_target_id
+    ) {
+
+      manualButton.disabled =
+        true;
+
+      randomButton.disabled =
+        true;
+
+      selectionStatus.textContent =
+        "現在の目標をクリアすると次を選べます";
+
+      return;
+
+    }
+
+
+    if (
+      completedTargetIds.size >=
+      100
+    ) {
+
+      manualButton.disabled =
+        true;
+
+      randomButton.disabled =
+        true;
+
+      selectionStatus.textContent =
+        "100 / 100 制覇達成！";
+
+      return;
+
+    }
+
+
+    manualButton.disabled =
+      false;
+
+    randomButton.disabled =
+      false;
+
+    selectionStatus.textContent =
+      "";
+
+  }
+
+
+  // ==========================================
+  // 現在の挑戦表示
   // ==========================================
 
   function displayCurrentChallenge() {
 
     const targetId =
-      gameProgress?.current_target_id;
+      gameProgress
+        ?.current_target_id;
 
 
     if (!targetId) {
 
       document
-        .getElementById("currentTargetName")
+        .getElementById(
+          "currentTargetName"
+        )
         .textContent =
           "まだ選択されていません";
 
-      document
-        .getElementById("currentTargetInfo")
-        .textContent = "";
 
       document
-        .getElementById("progressBar")
-        .classList.add("hidden");
+        .getElementById(
+          "currentTargetInfo"
+        )
+        .textContent =
+          "";
+
+
+      document
+        .getElementById(
+          "progressBar"
+        )
+        .classList
+        .add("hidden");
+
 
       return;
 
@@ -1061,7 +1299,9 @@
 
     const target =
       allTargets.find(
-        item => item.id === targetId
+        item =>
+          item.id ===
+          targetId
       );
 
 
@@ -1078,7 +1318,8 @@
 
     const currentSteps =
       Number(
-        gameProgress.current_steps ?? 0
+        gameProgress
+          .current_steps ?? 0
       );
 
 
@@ -1090,22 +1331,28 @@
 
     const remaining =
       Math.max(
-        requiredSteps - currentSteps,
+        requiredSteps -
+        currentSteps,
         0
       );
 
 
     document
-      .getElementById("currentTargetName")
+      .getElementById(
+        "currentTargetName"
+      )
       .textContent =
         target.name_ja;
 
 
     document
-      .getElementById("currentTargetInfo")
+      .getElementById(
+        "currentTargetInfo"
+      )
       .innerHTML =
         `
-        ${target.country}<br>
+        ${escapeHtml(target.country)}
+        <br>
         高さ：
         ${Number(target.height_m).toLocaleString()}m
         <br>
@@ -1128,12 +1375,17 @@
 
 
     document
-      .getElementById("progressBar")
-      .classList.remove("hidden");
+      .getElementById(
+        "progressBar"
+      )
+      .classList
+      .remove("hidden");
 
 
     document
-      .getElementById("progressFill")
+      .getElementById(
+        "progressFill"
+      )
       .style.width =
         ratio + "%";
 
@@ -1141,33 +1393,40 @@
 
 
   // ==========================================
-  // 目標一覧
+  // 手動選択
   // ==========================================
 
   function openTargetList() {
 
     if (
-      gameProgress?.current_target_id
+      gameProgress
+        ?.current_target_id
     ) {
-
       return;
-
     }
 
-    currentFilter = "all";
+
+    currentFilter =
+      "all";
+
 
     updateFilterButtons();
 
     renderTargetList();
 
-    showScreen("targetScreen");
+    showScreen(
+      "targetScreen"
+    );
 
   }
 
 
-  function setFilter(filter) {
+  function setFilter(
+    filter
+  ) {
 
-    currentFilter = filter;
+    currentFilter =
+      filter;
 
     updateFilterButtons();
 
@@ -1179,37 +1438,39 @@
   function updateFilterButtons() {
 
     const buttons = {
+
       all:
-        document.getElementById(
-          "filterAll"
-        ),
+        document
+          .getElementById(
+            "filterAll"
+          ),
+
       building:
-        document.getElementById(
-          "filterBuilding"
-        ),
+        document
+          .getElementById(
+            "filterBuilding"
+          ),
+
       mountain:
-        document.getElementById(
-          "filterMountain"
-        )
+        document
+          .getElementById(
+            "filterMountain"
+          )
+
     };
 
 
     for (
       const [key, button]
-      of Object.entries(buttons)
+      of Object.entries(
+        buttons
+      )
     ) {
 
-      if (key === currentFilter) {
-
-        button.className =
-          "filter-active";
-
-      } else {
-
-        button.className =
-          "filter-inactive";
-
-      }
+      button.className =
+        key === currentFilter
+          ? "filter-active"
+          : "filter-inactive";
 
     }
 
@@ -1219,50 +1480,64 @@
   function renderTargetList() {
 
     const list =
-      document.getElementById(
-        "targetList"
-      );
+      document
+        .getElementById(
+          "targetList"
+        );
 
 
     list.innerHTML = "";
 
 
     const targets =
-      allTargets.filter(target => {
+      allTargets.filter(
+        target => {
 
-        if (
-          currentFilter === "all"
-        ) {
-          return true;
+          if (
+            currentFilter ===
+            "all"
+          ) {
+            return true;
+          }
+
+          return (
+            target.category ===
+            currentFilter
+          );
+
         }
-
-        return (
-          target.category ===
-          currentFilter
-        );
-
-      });
+      );
 
 
-    for (const target of targets) {
+    for (
+      const target
+      of targets
+    ) {
 
       const completed =
-        completedTargetIds.has(
-          target.id
-        );
+        completedTargetIds
+          .has(target.id);
 
 
       const item =
-        document.createElement("div");
+        document
+          .createElement(
+            "div"
+          );
 
 
       item.className =
         "target-item" +
-        (completed ? " completed" : "");
+        (
+          completed
+            ? " completed"
+            : ""
+        );
 
 
       const categoryName =
-        target.category === "building"
+        target.category ===
+        "building"
           ? "建造物"
           : "山";
 
@@ -1301,29 +1576,31 @@
 
         item.addEventListener(
           "click",
-          () => {
-            selectTarget(target.id);
-          }
+          () =>
+            selectTarget(
+              target.id
+            )
         );
 
       }
 
 
-      list.appendChild(item);
+      list.appendChild(
+        item
+      );
 
     }
 
   }
 
 
-  // ==========================================
-  // 目標を選択
-  // ==========================================
-
-  function selectTarget(targetId) {
+  function selectTarget(
+    targetId
+  ) {
 
     if (
-      completedTargetIds.has(targetId)
+      completedTargetIds
+        .has(targetId)
     ) {
       return;
     }
@@ -1331,7 +1608,9 @@
 
     selectedTarget =
       allTargets.find(
-        item => item.id === targetId
+        item =>
+          item.id ===
+          targetId
       );
 
 
@@ -1341,13 +1620,17 @@
 
 
     document
-      .getElementById("confirmName")
+      .getElementById(
+        "confirmName"
+      )
       .textContent =
         selectedTarget.name_ja;
 
 
     document
-      .getElementById("confirmDetails")
+      .getElementById(
+        "confirmDetails"
+      )
       .innerHTML =
         `
         ${escapeHtml(selectedTarget.country)}
@@ -1361,17 +1644,384 @@
 
 
     document
-      .getElementById("confirmStatus")
+      .getElementById(
+        "confirmStatus"
+      )
       .textContent = "";
 
 
-    showScreen("confirmScreen");
+    showScreen(
+      "confirmScreen"
+    );
 
   }
 
 
   // ==========================================
-  // 挑戦開始
+  // ランダム選択
+  // ==========================================
+
+  async function openRandomTarget() {
+
+    if (
+      gameProgress
+        ?.current_target_id
+    ) {
+      return;
+    }
+
+
+    // パス使用中だった場合は
+    // 2回目の抽選として再開
+
+    chooseRandomTarget();
+
+
+    if (!randomTarget) {
+
+      return;
+
+    }
+
+
+    displayRandomTarget();
+
+    showScreen(
+      "randomScreen"
+    );
+
+  }
+
+
+  function chooseRandomTarget() {
+
+    const skippedId =
+      gameProgress
+        ?.random_skipped_target_id;
+
+
+    let candidates =
+      allTargets.filter(
+        target => {
+
+          if (
+            completedTargetIds
+              .has(target.id)
+          ) {
+            return false;
+          }
+
+
+          if (
+            gameProgress
+              ?.random_pass_used &&
+            skippedId &&
+            target.id ===
+              skippedId
+          ) {
+            return false;
+          }
+
+
+          return true;
+
+        }
+      );
+
+
+    if (
+      candidates.length === 0
+    ) {
+
+      randomTarget = null;
+
+      alert(
+        "抽選できる目標がありません"
+      );
+
+      return;
+
+    }
+
+
+    const index =
+      Math.floor(
+        Math.random() *
+        candidates.length
+      );
+
+
+    randomTarget =
+      candidates[index];
+
+  }
+
+
+  function displayRandomTarget() {
+
+    if (!randomTarget) {
+      return;
+    }
+
+
+    document
+      .getElementById(
+        "randomName"
+      )
+      .textContent =
+        randomTarget.name_ja;
+
+
+    const categoryName =
+      randomTarget.category ===
+      "building"
+        ? "建造物"
+        : "山";
+
+
+    document
+      .getElementById(
+        "randomDetails"
+      )
+      .innerHTML =
+        `
+        ${categoryName}
+        ・
+        ${escapeHtml(randomTarget.country)}
+        <br>
+
+        高さ：
+        ${Number(randomTarget.height_m).toLocaleString()}m
+        <br>
+
+        必要歩数：
+        ${Number(randomTarget.required_steps).toLocaleString()}歩
+        `;
+
+
+    const passUsed =
+      Boolean(
+        gameProgress
+          ?.random_pass_used
+      );
+
+
+    const passButton =
+      document
+        .getElementById(
+          "passButton"
+        );
+
+
+    const mustMessage =
+      document
+        .getElementById(
+          "mustChallengeMessage"
+        );
+
+
+    const backButton =
+      document
+        .getElementById(
+          "randomBackButton"
+        );
+
+
+    if (passUsed) {
+
+      passButton
+        .classList
+        .add("hidden");
+
+      mustMessage
+        .classList
+        .remove("hidden");
+
+      backButton
+        .classList
+        .add("hidden");
+
+
+      document
+        .getElementById(
+          "randomBadge"
+        )
+        .textContent =
+          "再抽選";
+
+
+      document
+        .getElementById(
+          "randomQuestion"
+        )
+        .textContent =
+          "この目標に挑戦します";
+
+    } else {
+
+      passButton
+        .classList
+        .remove("hidden");
+
+      mustMessage
+        .classList
+        .add("hidden");
+
+      backButton
+        .classList
+        .remove("hidden");
+
+
+      document
+        .getElementById(
+          "randomBadge"
+        )
+        .textContent =
+          "ランダム抽選";
+
+
+      document
+        .getElementById(
+          "randomQuestion"
+        )
+        .textContent =
+          "この目標に挑戦しますか？";
+
+    }
+
+
+    document
+      .getElementById(
+        "randomStatus"
+      )
+      .textContent =
+        "";
+
+  }
+
+
+  // ==========================================
+  // ランダム：パス
+  // ==========================================
+
+  async function passRandomTarget() {
+
+    if (
+      !randomTarget ||
+      !currentUser
+    ) {
+      return;
+    }
+
+
+    if (
+      gameProgress
+        ?.random_pass_used
+    ) {
+      return;
+    }
+
+
+    const status =
+      document
+        .getElementById(
+          "randomStatus"
+        );
+
+
+    status.className =
+      "status";
+
+    status.textContent =
+      "再抽選しています...";
+
+
+    const skippedTargetId =
+      randomTarget.id;
+
+
+    const {
+      error
+    } =
+      await sb
+        .from(
+          "game_progress"
+        )
+        .update({
+
+          random_pass_used:
+            true,
+
+          random_skipped_target_id:
+            skippedTargetId,
+
+          updated_at:
+            new Date()
+              .toISOString()
+
+        })
+        .eq(
+          "user_id",
+          currentUser.id
+        )
+        .is(
+          "current_target_id",
+          null
+        )
+        .eq(
+          "random_pass_used",
+          false
+        );
+
+
+    if (error) {
+
+      console.error(error);
+
+      status.className =
+        "status error";
+
+      status.textContent =
+        "パスを登録できませんでした";
+
+      return;
+
+    }
+
+
+    gameProgress
+      .random_pass_used =
+        true;
+
+
+    gameProgress
+      .random_skipped_target_id =
+        skippedTargetId;
+
+
+    chooseRandomTarget();
+
+
+    if (!randomTarget) {
+
+      status.className =
+        "status error";
+
+      status.textContent =
+        "再抽選できる目標がありません";
+
+      return;
+
+    }
+
+
+    displayRandomTarget();
+
+  }
+
+
+  // ==========================================
+  // 手動：挑戦開始
   // ==========================================
 
   async function startChallenge() {
@@ -1385,103 +2035,28 @@
 
 
     const status =
-      document.getElementById(
-        "confirmStatus"
-      );
+      document
+        .getElementById(
+          "confirmStatus"
+        );
 
 
-    status.className = "status";
+    status.className =
+      "status";
 
     status.textContent =
       "登録しています...";
 
 
-    // 念のためDBを再確認
-    // すでに挑戦中なら上書きしない
-
-    const {
-      data: latestProgress,
-      error: checkError
-    } = await sb
-      .from("game_progress")
-      .select("current_target_id, carry_steps")
-      .eq("user_id", currentUser.id)
-      .single();
-
-
-    if (checkError) {
-
-      console.error(checkError);
-
-      status.className =
-        "status error";
-
-      status.textContent =
-        "進行状態を確認できませんでした";
-
-      return;
-
-    }
-
-
-    if (
-      latestProgress.current_target_id
-    ) {
-
-      status.className =
-        "status error";
-
-      status.textContent =
-        "すでに挑戦中の目標があります";
-
-      return;
-
-    }
-
-
-    // 持ち越し歩数は新しい目標へ投入する
-
-    const carrySteps =
-      Number(
-        latestProgress.carry_steps ?? 0
+    const success =
+      await saveChallenge(
+        selectedTarget,
+        status
       );
 
 
-    const {
-      error: updateError
-    } = await sb
-      .from("game_progress")
-      .update({
-        current_target_id:
-          selectedTarget.id,
-
-        current_steps:
-          carrySteps,
-
-        carry_steps:
-          0,
-
-        updated_at:
-          new Date().toISOString()
-      })
-      .eq(
-        "user_id",
-        currentUser.id
-      );
-
-
-    if (updateError) {
-
-      console.error(updateError);
-
-      status.className =
-        "status error";
-
-      status.textContent =
-        "挑戦を開始できませんでした";
-
+    if (!success) {
       return;
-
     }
 
 
@@ -1491,7 +2066,233 @@
     await loadData();
 
 
-    showScreen("mainScreen");
+    showScreen(
+      "mainScreen"
+    );
+
+  }
+
+
+  // ==========================================
+  // ランダム：挑戦開始
+  // ==========================================
+
+  async function startRandomChallenge() {
+
+    if (
+      !randomTarget ||
+      !currentUser
+    ) {
+      return;
+    }
+
+
+    const status =
+      document
+        .getElementById(
+          "randomStatus"
+        );
+
+
+    status.className =
+      "status";
+
+    status.textContent =
+      "登録しています...";
+
+
+    const success =
+      await saveChallenge(
+        randomTarget,
+        status
+      );
+
+
+    if (!success) {
+      return;
+    }
+
+
+    randomTarget = null;
+
+
+    await loadData();
+
+
+    showScreen(
+      "mainScreen"
+    );
+
+  }
+
+
+  // ==========================================
+  // 挑戦をDBへ保存
+  // ==========================================
+
+  async function saveChallenge(
+    target,
+    statusElement
+  ) {
+
+    // DBを再確認
+
+    const {
+      data: latestProgress,
+      error: checkError
+    } =
+      await sb
+        .from(
+          "game_progress"
+        )
+        .select(`
+          current_target_id,
+          carry_steps
+        `)
+        .eq(
+          "user_id",
+          currentUser.id
+        )
+        .single();
+
+
+    if (checkError) {
+
+      console.error(
+        checkError
+      );
+
+      statusElement.className =
+        "status error";
+
+      statusElement.textContent =
+        "進行状態を確認できませんでした";
+
+      return false;
+
+    }
+
+
+    if (
+      latestProgress
+        .current_target_id
+    ) {
+
+      statusElement.className =
+        "status error";
+
+      statusElement.textContent =
+        "すでに挑戦中の目標があります";
+
+      return false;
+
+    }
+
+
+    if (
+      completedTargetIds
+        .has(target.id)
+    ) {
+
+      statusElement.className =
+        "status error";
+
+      statusElement.textContent =
+        "この目標はすでに制覇済みです";
+
+      return false;
+
+    }
+
+
+    const carrySteps =
+      Number(
+        latestProgress
+          .carry_steps ?? 0
+      );
+
+
+    const {
+      error: updateError
+    } =
+      await sb
+        .from(
+          "game_progress"
+        )
+        .update({
+
+          current_target_id:
+            target.id,
+
+          current_steps:
+            carrySteps,
+
+          carry_steps:
+            0,
+
+          random_pass_used:
+            false,
+
+          random_skipped_target_id:
+            null,
+
+          updated_at:
+            new Date()
+              .toISOString()
+
+        })
+        .eq(
+          "user_id",
+          currentUser.id
+        )
+        .is(
+          "current_target_id",
+          null
+        );
+
+
+    if (updateError) {
+
+      console.error(
+        updateError
+      );
+
+      statusElement.className =
+        "status error";
+
+      statusElement.textContent =
+        "挑戦を開始できませんでした";
+
+      return false;
+
+    }
+
+
+    return true;
+
+  }
+
+
+  // ==========================================
+  // ランダム選択キャンセル
+  // ==========================================
+
+  function cancelRandomSelection() {
+
+    // パス前だけ戻れる
+    if (
+      gameProgress
+        ?.random_pass_used
+    ) {
+      return;
+    }
+
+
+    randomTarget = null;
+
+    showScreen(
+      "mainScreen"
+    );
 
   }
 
@@ -1504,7 +2305,9 @@
 
     selectedTarget = null;
 
-    showScreen("mainScreen");
+    showScreen(
+      "mainScreen"
+    );
 
   }
 
@@ -1515,7 +2318,9 @@
 
     renderTargetList();
 
-    showScreen("targetScreen");
+    showScreen(
+      "targetScreen"
+    );
 
   }
 
@@ -1524,28 +2329,49 @@
   // HTML安全化
   // ==========================================
 
-  function escapeHtml(value) {
+  function escapeHtml(
+    value
+  ) {
 
     return String(value)
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;")
-      .replaceAll("'", "&#039;");
+      .replaceAll(
+        "&",
+        "&amp;"
+      )
+      .replaceAll(
+        "<",
+        "&lt;"
+      )
+      .replaceAll(
+        ">",
+        "&gt;"
+      )
+      .replaceAll(
+        '"',
+        "&quot;"
+      )
+      .replaceAll(
+        "'",
+        "&#039;"
+      );
 
   }
 
 
   // ==========================================
-  // エラー表示
+  // エラー
   // ==========================================
 
-  function showError(message) {
+  function showError(
+    message
+  ) {
 
     const status =
-      document.getElementById(
-        "appStatus"
-      );
+      document
+        .getElementById(
+          "appStatus"
+        );
+
 
     status.className =
       "status error";

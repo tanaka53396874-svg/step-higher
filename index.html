@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>STEP HIGHER</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    *{box-sizing:border-box} body{margin:0;background:#f3f5f7;color:#222;font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif}
+    .app{max-width:520px;margin:0 auto;padding:22px 16px 50px} h1{margin:8px 0 4px;text-align:center;font-size:30px;letter-spacing:2px}
+    .subtitle{text-align:center;color:#777;font-size:13px;margin-bottom:22px}.card{background:#fff;border-radius:16px;padding:18px;margin-bottom:14px;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+    .label{color:#777;font-size:13px;margin-bottom:5px}.big-number{font-size:34px;font-weight:700}.unit{font-size:16px;font-weight:500}
+    .target-name{font-size:23px;font-weight:700;margin-top:5px}.target-info,.details{margin-top:8px;color:#666;font-size:14px;line-height:1.7}
+    .progress-bar{width:100%;height:15px;margin-top:14px;background:#e5e5e5;border-radius:10px;overflow:hidden}.progress-fill{height:100%;background:#333}
+    .counts{display:grid;grid-template-columns:1fr 1fr;gap:12px}.count-box{text-align:center;padding:8px}.count-title{color:#777;font-size:13px}.count-number{margin-top:4px;font-size:24px;font-weight:700}
+    button{width:100%;border:0;border-radius:13px;padding:15px;margin-top:10px;font-size:16px;font-weight:700;cursor:pointer}.primary{background:#222;color:#fff}.secondary{background:#e5e7ea;color:#222}
+    .pass-button{background:#fff;color:#222;border:2px solid #222}button:disabled{opacity:.45;cursor:default}.login{margin-top:18px}
+    input{width:100%;padding:13px;margin-top:9px;border:1px solid #ccc;border-radius:10px;font-size:16px}.status{margin-top:12px;text-align:center;color:#777;font-size:13px;line-height:1.5}.error{color:#c62828}.success{color:#1b5e20;font-weight:700}.hidden{display:none!important}
+    .screen-title{font-size:25px;font-weight:700;margin-bottom:14px}.filter-buttons{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:15px}.filter-buttons button{padding:11px 5px;margin:0;font-size:14px}
+    .filter-active{background:#222;color:#fff}.filter-inactive{background:#e5e7ea;color:#222}.target-list{display:flex;flex-direction:column;gap:9px}.target-item{background:#fff;border-radius:14px;padding:14px 15px;box-shadow:0 1px 7px rgba(0,0,0,.05);cursor:pointer}
+    .target-item.completed{opacity:.48;cursor:default}.target-item-name{font-size:17px;font-weight:700}.target-item-details{margin-top:5px;color:#666;font-size:13px;line-height:1.5}.completed-label{display:inline-block;margin-top:6px;padding:3px 8px;background:#e5e7ea;border-radius:8px;font-size:12px;font-weight:700}
+    .back-button{margin-bottom:15px}.confirm-box{text-align:center;padding:10px 0}.confirm-name{margin:10px 0;font-size:27px;font-weight:700}.confirm-details{color:#666;font-size:15px;line-height:1.8}.confirm-question{margin-top:20px;font-size:17px;font-weight:700}
+    .random-badge{display:inline-block;padding:5px 10px;margin-bottom:8px;background:#e5e7ea;border-radius:10px;color:#555;font-size:12px;font-weight:700}.must-challenge{margin-top:14px;padding:10px;background:#f0f0f0;border-radius:10px;font-size:13px;font-weight:700}
+    .section-heading{font-size:20px;font-weight:700;margin:22px 0 10px}.history-row{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.history-date{white-space:nowrap;color:#555;font-size:13px}.cycle-title{font-size:18px;font-weight:700}.empty{color:#777;text-align:center;padding:15px}
+  </style>
+</head>
+<body>
+<div class="app">
+  <div id="loginScreen">
+    <h1>STEP HIGHER</h1><div class="subtitle">歩いて世界の建造物と山を制覇</div>
+    <div class="card login"><div class="label">Supabaseにログイン</div>
+      <input id="email" type="email" placeholder="メールアドレス"><input id="password" type="password" placeholder="パスワード">
+      <button class="primary" onclick="login()">ログイン</button><div id="loginStatus" class="status"></div>
+    </div>
+  </div>
+
+  <div id="mainScreen" class="hidden">
+    <h1>STEP HIGHER</h1><div class="subtitle">歩いて世界の建造物と山を制覇</div>
+    <div class="card"><div class="label">今日の歩数</div><div class="big-number"><span id="todaySteps">0</span> <span class="unit">歩</span></div></div>
+    <div class="card"><div class="label">制覇数</div><div class="big-number"><span id="completedTotal">0</span> <span class="unit">/ 100</span></div>
+      <div class="counts"><div class="count-box"><div class="count-title">建造物</div><div class="count-number"><span id="completedBuildings">0</span> / 50</div></div>
+      <div class="count-box"><div class="count-title">山</div><div class="count-number"><span id="completedMountains">0</span> / 50</div></div></div>
+      <button class="secondary" onclick="openHistory()">制覇履歴を見る</button>
+    </div>
+    <div class="card"><div class="label">現在の挑戦</div><div id="currentTargetName" class="target-name">まだ選択されていません</div><div id="currentTargetInfo" class="target-info"></div>
+      <div id="progressBar" class="progress-bar hidden"><div id="progressFill" class="progress-fill"></div></div>
+    </div>
+    <div class="card"><div class="label">持ち越し歩数</div><div class="big-number"><span id="carrySteps">0</span> <span class="unit">歩</span></div></div>
+    <div class="card"><button id="manualButton" class="primary" onclick="openTargetList()">自分で選ぶ</button><button id="randomButton" class="secondary" onclick="openRandomTarget()">ランダムで選ぶ</button><button id="nextCycleButton" class="primary hidden" onclick="prepareNextCycle()">次の周回を開始</button><div id="selectionStatus" class="status"></div></div>
+    <div id="appStatus" class="status"></div>
+  </div>
+
+  <div id="targetScreen" class="hidden">
+    <button class="secondary back-button" onclick="backToMain()">← 戻る</button><div class="screen-title">挑戦する目標を選ぶ</div>
+    <div class="filter-buttons"><button id="filterAll" class="filter-active" onclick="setFilter('all')">すべて</button><button id="filterBuilding" class="filter-inactive" onclick="setFilter('building')">建造物</button><button id="filterMountain" class="filter-inactive" onclick="setFilter('mountain')">山</button></div>
+    <div id="targetList" class="target-list"></div>
+  </div>
+
+  <div id="confirmScreen" class="hidden">
+    <button class="secondary back-button" onclick="backToTargetList()">← 選び直す</button>
+    <div class="card confirm-box"><div class="label">次の挑戦</div><div id="confirmName" class="confirm-name"></div><div id="confirmDetails" class="confirm-details"></div><div class="confirm-question">この目標に挑戦しますか？</div><button class="primary" onclick="startChallenge()">挑戦する</button></div>
+    <div id="confirmStatus" class="status"></div>
+  </div>
+
+  <div id="randomScreen" class="hidden">
+    <button class="secondary back-button" onclick="leaveRandomScreen()">← 戻る</button><div class="screen-title">ランダムチャレンジ</div>
+    <div class="card confirm-box"><div id="randomBadge" class="random-badge">ランダム抽選</div><div id="randomName" class="confirm-name"></div><div id="randomDetails" class="confirm-details"></div><div id="randomQuestion" class="confirm-question">この目標に挑戦しますか？</div><div id="mustChallengeMessage" class="must-challenge hidden">パスを使用済みです。この目標に挑戦します。</div><button class="primary" onclick="startRandomChallenge()">挑戦する</button><button id="passButton" class="pass-button" onclick="passRandomTarget()">1回だけパス</button></div>
+    <div id="randomStatus" class="status"></div>
+  </div>
+
+  <div id="historyScreen" class="hidden">
+    <button class="secondary back-button" onclick="showScreen('mainScreen')">← 戻る</button><div class="screen-title">制覇履歴</div>
+    <div class="section-heading">周回履歴</div><div id="cycleHistory"></div>
+    <div class="section-heading">対象物の最新制覇日</div><div id="targetHistory" class="target-list"></div>
+    <div id="historyStatus" class="status"></div>
+  </div>
+</div>
+
+<script>
+  const SUPABASE_URL =
+    "https://lodgpydrwbbqnogshjir.supabase.co/";
+
+  const SUPABASE_KEY =
+    "sb_publishable_2m9HkObR_Nf_-OxtpLHb4Q_-uROIako";
+
+const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+let currentUser=null,gameProgress=null,allTargets=[],completedTargetIds=new Set(),selectedTarget=null,randomTarget=null,currentFilter="all",stepsAppliedThisLoad=false;
+
+document.addEventListener("DOMContentLoaded",async()=>{const{data:{session}}=await sb.auth.getSession();if(session){currentUser=session.user;showScreen("mainScreen");await startApp();}});
+async function login(){const email=document.getElementById("email").value.trim(),password=document.getElementById("password").value,status=document.getElementById("loginStatus");status.className="status";status.textContent="ログイン中...";const{data,error}=await sb.auth.signInWithPassword({email,password});if(error){console.error(error);status.className="status error";status.textContent="ログインできませんでした";return}currentUser=data.user;status.textContent="";showScreen("mainScreen");await startApp();}
+async function startApp(){stepsAppliedThisLoad=false;await loadData(false);if(!gameProgress)return;await applySteps();await loadData(true);}
+async function applySteps(){if(stepsAppliedThisLoad)return;stepsAppliedThisLoad=true;const status=document.getElementById("appStatus");status.className="status";status.textContent="歩数を反映しています...";const{data,error}=await sb.rpc("apply_unapplied_steps");if(error){console.error(error);status.className="status error";status.textContent="歩数の反映に失敗しました";return}const applied=Number(data?.applied??0),completedTargetId=data?.completed_target_id;if(completedTargetId){const target=allTargets.find(x=>x.id===Number(completedTargetId));status.className="status success";status.textContent=target?`${target.name_ja}を制覇しました！`:"目標を制覇しました！";return}status.textContent=applied>0?`${applied.toLocaleString()}歩を反映しました`:"";}
+function showScreen(id){["loginScreen","mainScreen","targetScreen","confirmScreen","randomScreen","historyScreen"].forEach(x=>document.getElementById(x).classList.add("hidden"));document.getElementById(id).classList.remove("hidden");window.scrollTo(0,0);}
+async function loadData(keepStatus=false){const status=document.getElementById("appStatus");if(!keepStatus){status.className="status";status.textContent="データを読み込んでいます..."}if(!currentUser){const{data:{user}}=await sb.auth.getUser();currentUser=user}if(!currentUser){showError("ユーザー情報を取得できませんでした");return}
+const today=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Tokyo",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
+let r=await sb.from("daily_steps").select("steps,applied_steps").eq("user_id",currentUser.id).eq("step_date",today).maybeSingle();if(r.error){console.error(r.error);showError("歩数データを取得できませんでした");return}document.getElementById("todaySteps").textContent=Number(r.data?.steps??0).toLocaleString();
+r=await sb.from("game_progress").select("cycle,current_target_id,current_steps,carry_steps,random_pass_used,random_skipped_target_id,random_current_target_id").eq("user_id",currentUser.id).maybeSingle();if(r.error){console.error(r.error);showError("ゲーム進行データを取得できませんでした");return}gameProgress=r.data;if(!gameProgress){showError("game_progressの初期データがありません");return}document.getElementById("carrySteps").textContent=Number(gameProgress.carry_steps??0).toLocaleString();
+r=await sb.from("targets").select("id,category,name_ja,name_en,country,height_m,required_steps").order("id");if(r.error){console.error(r.error);showError("目標データを取得できませんでした");return}allTargets=r.data??[];
+r=await sb.from("target_completions").select("target_id").eq("user_id",currentUser.id).eq("cycle",gameProgress.cycle??1);if(r.error){console.error(r.error);showError("クリア履歴を取得できませんでした");return}completedTargetIds=new Set((r.data??[]).map(x=>x.target_id));
+let b=0,m=0;for(const t of allTargets){if(!completedTargetIds.has(t.id))continue;if(t.category==="building")b++;if(t.category==="mountain")m++}document.getElementById("completedTotal").textContent=completedTargetIds.size;document.getElementById("completedBuildings").textContent=b;document.getElementById("completedMountains").textContent=m;displayCurrentChallenge();updateSelectionButtons();if(!keepStatus)status.textContent="Supabaseとの接続は正常です";}
+function updateSelectionButtons(){const mb=document.getElementById("manualButton"),rb=document.getElementById("randomButton"),nb=document.getElementById("nextCycleButton"),s=document.getElementById("selectionStatus");nb.classList.add("hidden");mb.classList.remove("hidden");rb.classList.remove("hidden");if(gameProgress?.current_target_id){mb.disabled=rb.disabled=true;rb.textContent="ランダムで選ぶ";s.textContent="現在の目標をクリアすると次を選べます";return}if(completedTargetIds.size>=100){mb.disabled=rb.disabled=true;mb.classList.add("hidden");rb.classList.add("hidden");nb.classList.remove("hidden");nb.textContent=`${Number(gameProgress.cycle??1)+1}周目を開始`;s.textContent="100 / 100 制覇達成！ 次の周回は0歩から始まります";return}if(gameProgress?.random_current_target_id){mb.disabled=true;rb.disabled=false;rb.textContent="ランダム抽選を続ける";s.textContent=gameProgress.random_pass_used?"再抽選された目標が確定しています":"抽選中の目標があります";return}mb.disabled=rb.disabled=false;rb.textContent="ランダムで選ぶ";s.textContent="";}
+function displayCurrentChallenge(){const id=gameProgress?.current_target_id;if(!id){document.getElementById("currentTargetName").textContent="まだ選択されていません";document.getElementById("currentTargetInfo").textContent="";document.getElementById("progressBar").classList.add("hidden");return}const t=allTargets.find(x=>x.id===id);if(!t)return;const cur=Number(gameProgress.current_steps??0),req=Number(t.required_steps),remain=Math.max(req-cur,0);document.getElementById("currentTargetName").textContent=t.name_ja;document.getElementById("currentTargetInfo").innerHTML=`${escapeHtml(t.country)}<br>高さ：${Number(t.height_m).toLocaleString()}m<br>${cur.toLocaleString()} / ${req.toLocaleString()}歩<br>あと ${remain.toLocaleString()}歩`;document.getElementById("progressBar").classList.remove("hidden");document.getElementById("progressFill").style.width=Math.min(cur/req*100,100)+"%";}
+function openTargetList(){if(gameProgress?.current_target_id||gameProgress?.random_current_target_id)return;currentFilter="all";updateFilterButtons();renderTargetList();showScreen("targetScreen");}
+function setFilter(f){currentFilter=f;updateFilterButtons();renderTargetList();}
+function updateFilterButtons(){const b={all:document.getElementById("filterAll"),building:document.getElementById("filterBuilding"),mountain:document.getElementById("filterMountain")};for(const[k,v]of Object.entries(b))v.className=k===currentFilter?"filter-active":"filter-inactive";}
+function renderTargetList(){const list=document.getElementById("targetList");list.innerHTML="";for(const t of allTargets.filter(x=>currentFilter==="all"||x.category===currentFilter)){const done=completedTargetIds.has(t.id),item=document.createElement("div");item.className="target-item"+(done?" completed":"");item.innerHTML=`<div class="target-item-name">${escapeHtml(t.name_ja)}</div><div class="target-item-details">${t.category==="building"?"建造物":"山"}・${escapeHtml(t.country)}<br>高さ ${Number(t.height_m).toLocaleString()}m・${Number(t.required_steps).toLocaleString()}歩</div>${done?'<div class="completed-label">制覇済み</div>':""}`;if(!done)item.onclick=()=>selectTarget(t.id);list.appendChild(item);}}
+function selectTarget(id){if(completedTargetIds.has(id))return;selectedTarget=allTargets.find(x=>x.id===id);if(!selectedTarget)return;document.getElementById("confirmName").textContent=selectedTarget.name_ja;document.getElementById("confirmDetails").innerHTML=`${escapeHtml(selectedTarget.country)}<br>高さ：${Number(selectedTarget.height_m).toLocaleString()}m<br>必要歩数：${Number(selectedTarget.required_steps).toLocaleString()}歩`;document.getElementById("confirmStatus").textContent="";showScreen("confirmScreen");}
+async function openRandomTarget(){if(gameProgress?.current_target_id)return;if(gameProgress?.random_current_target_id){randomTarget=allTargets.find(t=>t.id===gameProgress.random_current_target_id);if(!randomTarget)return;displayRandomTarget();showScreen("randomScreen");return}const c=allTargets.filter(t=>!completedTargetIds.has(t.id));if(!c.length)return;const t=c[Math.floor(Math.random()*c.length)];const{error}=await sb.from("game_progress").update({random_current_target_id:t.id,random_pass_used:false,random_skipped_target_id:null,updated_at:new Date().toISOString()}).eq("user_id",currentUser.id).is("current_target_id",null).is("random_current_target_id",null);if(error){console.error(error);alert("抽選結果を保存できませんでした");return}gameProgress.random_current_target_id=t.id;gameProgress.random_pass_used=false;gameProgress.random_skipped_target_id=null;randomTarget=t;updateSelectionButtons();displayRandomTarget();showScreen("randomScreen");}
+function displayRandomTarget(){if(!randomTarget)return;document.getElementById("randomName").textContent=randomTarget.name_ja;document.getElementById("randomDetails").innerHTML=`${randomTarget.category==="building"?"建造物":"山"}・${escapeHtml(randomTarget.country)}<br>高さ：${Number(randomTarget.height_m).toLocaleString()}m<br>必要歩数：${Number(randomTarget.required_steps).toLocaleString()}歩`;const used=!!gameProgress?.random_pass_used;document.getElementById("passButton").classList.toggle("hidden",used);document.getElementById("mustChallengeMessage").classList.toggle("hidden",!used);document.getElementById("randomBadge").textContent=used?"再抽選":"ランダム抽選";document.getElementById("randomQuestion").textContent=used?"この目標に挑戦します":"この目標に挑戦しますか？";}
+async function passRandomTarget(){if(!randomTarget||gameProgress?.random_pass_used)return;const skipped=randomTarget.id,c=allTargets.filter(t=>!completedTargetIds.has(t.id)&&t.id!==skipped);if(!c.length){document.getElementById("randomStatus").textContent="再抽選できる目標がありません";return}const t=c[Math.floor(Math.random()*c.length)];const{error}=await sb.from("game_progress").update({random_pass_used:true,random_skipped_target_id:skipped,random_current_target_id:t.id,updated_at:new Date().toISOString()}).eq("user_id",currentUser.id).is("current_target_id",null).eq("random_current_target_id",skipped).eq("random_pass_used",false);if(error){console.error(error);document.getElementById("randomStatus").textContent="パスを登録できませんでした";return}gameProgress.random_pass_used=true;gameProgress.random_skipped_target_id=skipped;gameProgress.random_current_target_id=t.id;randomTarget=t;updateSelectionButtons();displayRandomTarget();}
+async function startChallenge(){if(!selectedTarget)return;const ok=await saveChallenge(selectedTarget,document.getElementById("confirmStatus"),false);if(!ok)return;selectedTarget=null;await normalizeAfterChallengeStart();showScreen("mainScreen");}
+async function startRandomChallenge(){if(!randomTarget)return;const ok=await saveChallenge(randomTarget,document.getElementById("randomStatus"),true);if(!ok)return;randomTarget=null;await normalizeAfterChallengeStart();showScreen("mainScreen");}
+async function normalizeAfterChallengeStart(){const{error}=await sb.rpc("apply_unapplied_steps");if(error)console.error(error);await loadData(true);}
+async function saveChallenge(t,s,fromRandom){s.className="status";s.textContent="登録しています...";const{data:latest,error:checkError}=await sb.from("game_progress").select("current_target_id,random_current_target_id").eq("user_id",currentUser.id).single();if(checkError){s.className="status error";s.textContent="進行状態を確認できませんでした";return false}if(latest.current_target_id){s.className="status error";s.textContent="すでに挑戦中の目標があります";return false}if(fromRandom&&latest.random_current_target_id!==t.id){s.className="status error";s.textContent="抽選結果が一致しません";return false}if(!fromRandom&&latest.random_current_target_id){s.className="status error";s.textContent="ランダム抽選中の目標があります";return false}const{error}=await sb.rpc("start_target_challenge",{p_target_id:t.id});if(error){console.error(error);s.className="status error";s.textContent="挑戦を開始できませんでした";return false}return true;}
+async function prepareNextCycle(){const nb=document.getElementById("nextCycleButton"),s=document.getElementById("selectionStatus");nb.disabled=true;s.className="status";s.textContent="次の周回を準備しています...";const{data,error}=await sb.rpc("prepare_next_cycle");if(error){console.error(error);nb.disabled=false;s.className="status error";s.textContent="次の周回を開始できませんでした";return}stepsAppliedThisLoad=false;await loadData(true);s.className="status success";s.textContent=`${Number(data?.new_cycle??gameProgress?.cycle??1)}周目を準備しました。最初の目標に挑戦した瞬間がスタート日時になります。`;}
+async function openHistory(){showScreen("historyScreen");const status=document.getElementById("historyStatus");status.className="status";status.textContent="履歴を読み込んでいます...";const [cyclesRes,compRes]=await Promise.all([sb.from("game_cycles").select("cycle,started_at,completed_at").eq("user_id",currentUser.id).order("cycle",{ascending:true}),sb.from("target_completions").select("target_id,cycle,completed_at").eq("user_id",currentUser.id).order("completed_at",{ascending:false})]);if(cyclesRes.error||compRes.error){console.error(cyclesRes.error||compRes.error);status.className="status error";status.textContent="履歴を取得できませんでした";return}renderCycleHistory(cyclesRes.data??[]);renderLatestTargetHistory(compRes.data??[]);status.textContent="";}
+function renderCycleHistory(rows){const box=document.getElementById("cycleHistory");box.innerHTML="";if(!rows.length){box.innerHTML='<div class="card empty">正式スタート前です</div>';return}for(const r of rows){const el=document.createElement("div");el.className="card";el.innerHTML=`<div class="cycle-title">${Number(r.cycle)}周目</div><div class="details">スタート日：${formatDate(r.started_at)}<br>全クリア日：${r.completed_at?formatDate(r.completed_at):"―"}</div>`;box.appendChild(el);}}
+function renderLatestTargetHistory(rows){const latest=new Map();for(const r of rows)if(!latest.has(r.target_id))latest.set(r.target_id,r);const box=document.getElementById("targetHistory");box.innerHTML="";for(const t of allTargets){const r=latest.get(t.id),el=document.createElement("div");el.className="target-item";el.innerHTML=`<div class="history-row"><div><div class="target-item-name">${escapeHtml(t.name_ja)}</div><div class="target-item-details">${t.category==="building"?"建造物":"山"}・${escapeHtml(t.country)}</div></div><div class="history-date">${r?`最新制覇：${formatDate(r.completed_at)}`:"未制覇"}</div></div>`;box.appendChild(el);}}
+function formatDate(v){if(!v)return"―";return new Intl.DateTimeFormat("ja-JP",{timeZone:"Asia/Tokyo",year:"numeric",month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit",hour12:false}).format(new Date(v));}
+function leaveRandomScreen(){randomTarget=null;updateSelectionButtons();showScreen("mainScreen");}function backToMain(){selectedTarget=null;showScreen("mainScreen");}function backToTargetList(){selectedTarget=null;renderTargetList();showScreen("targetScreen");}
+function escapeHtml(v){return String(v).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");}
+function showError(m){const s=document.getElementById("appStatus");s.className="status error";s.textContent=m;}
+</script>
+</body>
+</html>

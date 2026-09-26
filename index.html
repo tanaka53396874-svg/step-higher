@@ -143,7 +143,7 @@
     }
 
     .pass-button {
-      background: #fff;
+      background: white;
       color: #222;
       border: 2px solid #222;
     }
@@ -309,7 +309,7 @@
 
 <div class="app">
 
-  <!-- ログイン画面 -->
+  <!-- ログイン -->
 
   <div id="loginScreen">
 
@@ -325,25 +325,21 @@
         Supabaseにログイン
       </div>
 
-      <input
-        id="email"
-        type="email"
-        placeholder="メールアドレス">
+      <input id="email"
+             type="email"
+             placeholder="メールアドレス">
 
-      <input
-        id="password"
-        type="password"
-        placeholder="パスワード">
+      <input id="password"
+             type="password"
+             placeholder="パスワード">
 
-      <button
-        class="primary"
-        onclick="login()">
+      <button class="primary"
+              onclick="login()">
         ログイン
       </button>
 
-      <div
-        id="loginStatus"
-        class="status">
+      <div id="loginStatus"
+           class="status">
       </div>
 
     </div>
@@ -351,15 +347,17 @@
   </div>
 
 
-  <!-- トップ画面 -->
+  <!-- メイン -->
 
-  <div id="mainScreen" class="hidden">
+  <div id="mainScreen"
+       class="hidden">
 
     <h1>STEP HIGHER</h1>
 
     <div class="subtitle">
       歩いて世界の建造物と山を制覇
     </div>
+
 
     <div class="card">
 
@@ -389,17 +387,27 @@
       <div class="counts">
 
         <div class="count-box">
-          <div class="count-title">建造物</div>
+          <div class="count-title">
+            建造物
+          </div>
+
           <div class="count-number">
-            <span id="completedBuildings">0</span> / 50
+            <span id="completedBuildings">0</span>
+            / 50
           </div>
         </div>
 
         <div class="count-box">
-          <div class="count-title">山</div>
-          <div class="count-number">
-            <span id="completedMountains">0</span> / 50
+
+          <div class="count-title">
+            山
           </div>
+
+          <div class="count-number">
+            <span id="completedMountains">0</span>
+            / 50
+          </div>
+
         </div>
 
       </div>
@@ -413,24 +421,20 @@
         現在の挑戦
       </div>
 
-      <div
-        id="currentTargetName"
-        class="target-name">
+      <div id="currentTargetName"
+           class="target-name">
         まだ選択されていません
       </div>
 
-      <div
-        id="currentTargetInfo"
-        class="target-info">
+      <div id="currentTargetInfo"
+           class="target-info">
       </div>
 
-      <div
-        id="progressBar"
-        class="progress-bar hidden">
+      <div id="progressBar"
+           class="progress-bar hidden">
 
-        <div
-          id="progressFill"
-          class="progress-fill">
+        <div id="progressFill"
+             class="progress-fill">
         </div>
 
       </div>
@@ -454,42 +458,39 @@
 
     <div class="card">
 
-      <button
-        id="manualButton"
-        class="primary"
-        onclick="openTargetList()">
+      <button id="manualButton"
+              class="primary"
+              onclick="openTargetList()">
         自分で選ぶ
       </button>
 
-      <button
-        id="randomButton"
-        class="secondary"
-        onclick="openRandomTarget()">
+      <button id="randomButton"
+              class="secondary"
+              onclick="openRandomTarget()">
         ランダムで選ぶ
       </button>
 
-      <div
-        id="selectionStatus"
-        class="status">
+      <div id="selectionStatus"
+           class="status">
       </div>
 
     </div>
 
-    <div
-      id="appStatus"
-      class="status">
+
+    <div id="appStatus"
+         class="status">
     </div>
 
   </div>
 
 
-  <!-- 手動選択画面 -->
+  <!-- 手動一覧 -->
 
-  <div id="targetScreen" class="hidden">
+  <div id="targetScreen"
+       class="hidden">
 
-    <button
-      class="secondary back-button"
-      onclick="backToMain()">
+    <button class="secondary back-button"
+            onclick="backToMain()">
       ← 戻る
     </button>
 
@@ -497,48 +498,47 @@
       挑戦する目標を選ぶ
     </div>
 
+
     <div class="filter-buttons">
 
-      <button
-        id="filterAll"
-        class="filter-active"
-        onclick="setFilter('all')">
+      <button id="filterAll"
+              class="filter-active"
+              onclick="setFilter('all')">
         すべて
       </button>
 
-      <button
-        id="filterBuilding"
-        class="filter-inactive"
-        onclick="setFilter('building')">
+      <button id="filterBuilding"
+              class="filter-inactive"
+              onclick="setFilter('building')">
         建造物
       </button>
 
-      <button
-        id="filterMountain"
-        class="filter-inactive"
-        onclick="setFilter('mountain')">
+      <button id="filterMountain"
+              class="filter-inactive"
+              onclick="setFilter('mountain')">
         山
       </button>
 
     </div>
 
-    <div
-      id="targetList"
-      class="target-list">
+
+    <div id="targetList"
+         class="target-list">
     </div>
 
   </div>
 
 
-  <!-- 手動選択確認 -->
+  <!-- 手動確認 -->
 
-  <div id="confirmScreen" class="hidden">
+  <div id="confirmScreen"
+       class="hidden">
 
-    <button
-      class="secondary back-button"
-      onclick="backToTargetList()">
+    <button class="secondary back-button"
+            onclick="backToTargetList()">
       ← 選び直す
     </button>
+
 
     <div class="card confirm-box">
 
@@ -546,100 +546,92 @@
         次の挑戦
       </div>
 
-      <div
-        id="confirmName"
-        class="confirm-name">
+      <div id="confirmName"
+           class="confirm-name">
       </div>
 
-      <div
-        id="confirmDetails"
-        class="confirm-details">
+      <div id="confirmDetails"
+           class="confirm-details">
       </div>
 
       <div class="confirm-question">
         この目標に挑戦しますか？
       </div>
 
-      <button
-        class="primary"
-        onclick="startChallenge()">
+      <button class="primary"
+              onclick="startChallenge()">
         挑戦する
       </button>
 
     </div>
 
-    <div
-      id="confirmStatus"
-      class="status">
+
+    <div id="confirmStatus"
+         class="status">
     </div>
 
   </div>
 
 
-  <!-- ランダム選択画面 -->
+  <!-- ランダム -->
 
-  <div id="randomScreen" class="hidden">
+  <div id="randomScreen"
+       class="hidden">
 
-    <button
-      id="randomBackButton"
-      class="secondary back-button"
-      onclick="cancelRandomSelection()">
+    <button id="randomBackButton"
+            class="secondary back-button"
+            onclick="leaveRandomScreen()">
       ← 戻る
     </button>
+
 
     <div class="screen-title">
       ランダムチャレンジ
     </div>
 
+
     <div class="card confirm-box">
 
-      <div
-        id="randomBadge"
-        class="random-badge">
+      <div id="randomBadge"
+           class="random-badge">
         ランダム抽選
       </div>
 
-      <div
-        id="randomName"
-        class="confirm-name">
+      <div id="randomName"
+           class="confirm-name">
       </div>
 
-      <div
-        id="randomDetails"
-        class="confirm-details">
+      <div id="randomDetails"
+           class="confirm-details">
       </div>
 
-      <div
-        id="randomQuestion"
-        class="confirm-question">
+      <div id="randomQuestion"
+           class="confirm-question">
         この目標に挑戦しますか？
       </div>
 
-      <div
-        id="mustChallengeMessage"
-        class="must-challenge hidden">
+      <div id="mustChallengeMessage"
+           class="must-challenge hidden">
         パスを使用済みです。この目標に挑戦します。
       </div>
 
-      <button
-        id="randomChallengeButton"
-        class="primary"
-        onclick="startRandomChallenge()">
+      <button id="randomChallengeButton"
+              class="primary"
+              onclick="startRandomChallenge()">
         挑戦する
       </button>
 
-      <button
-        id="passButton"
-        class="pass-button"
-        onclick="passRandomTarget()">
+      <button id="passButton"
+              class="pass-button"
+              onclick="passRandomTarget()">
         1回だけパス
       </button>
 
     </div>
 
-    <div
-      id="randomStatus"
-      class="status">
+
+    <div id="randomStatus"
+         class="status">
     </div>
 
   </div>
@@ -651,7 +643,6 @@
 
   // ==========================================
   // Supabase
-  // ★現在使っている実際の値に置き換える
   // ==========================================
 
   const SUPABASE_URL =
@@ -668,7 +659,7 @@
 
 
   // ==========================================
-  // アプリデータ
+  // アプリ状態
   // ==========================================
 
   let currentUser = null;
@@ -840,7 +831,7 @@
 
 
   // ==========================================
-  // データ読み込み
+  // 全データ読み込み
   // ==========================================
 
   async function loadData() {
@@ -962,7 +953,8 @@
           current_steps,
           carry_steps,
           random_pass_used,
-          random_skipped_target_id
+          random_skipped_target_id,
+          random_current_target_id
         `)
         .eq(
           "user_id",
@@ -1012,7 +1004,7 @@
         ).toLocaleString();
 
 
-    // 100目標
+    // targets
 
     const {
       data: targets,
@@ -1029,9 +1021,7 @@
           height_m,
           required_steps
         `)
-        .order(
-          "id"
-        );
+        .order("id");
 
 
     if (targetsError) {
@@ -1179,7 +1169,7 @@
 
 
   // ==========================================
-  // 選択ボタン状態
+  // メインボタン状態
   // ==========================================
 
   function updateSelectionButtons() {
@@ -1243,11 +1233,41 @@
     }
 
 
+    // ランダム抽選がすでに始まっている場合、
+    // 手動選択への逃げ道も塞ぐ
+
+    if (
+      gameProgress
+        ?.random_current_target_id
+    ) {
+
+      manualButton.disabled =
+        true;
+
+      randomButton.disabled =
+        false;
+
+      randomButton.textContent =
+        "ランダム抽選を続ける";
+
+      selectionStatus.textContent =
+        gameProgress.random_pass_used
+          ? "再抽選された目標が確定しています"
+          : "抽選中の目標があります";
+
+      return;
+
+    }
+
+
     manualButton.disabled =
       false;
 
     randomButton.disabled =
       false;
+
+    randomButton.textContent =
+      "ランダムで選ぶ";
 
     selectionStatus.textContent =
       "";
@@ -1256,7 +1276,7 @@
 
 
   // ==========================================
-  // 現在の挑戦表示
+  // 現在の挑戦
   // ==========================================
 
   function displayCurrentChallenge() {
@@ -1406,6 +1426,14 @@
     }
 
 
+    if (
+      gameProgress
+        ?.random_current_target_id
+    ) {
+      return;
+    }
+
+
     currentFilter =
       "all";
 
@@ -1413,6 +1441,7 @@
     updateFilterButtons();
 
     renderTargetList();
+
 
     showScreen(
       "targetScreen"
@@ -1647,7 +1676,8 @@
       .getElementById(
         "confirmStatus"
       )
-      .textContent = "";
+      .textContent =
+        "";
 
 
     showScreen(
@@ -1671,69 +1701,81 @@
     }
 
 
-    // パス使用中だった場合は
-    // 2回目の抽選として再開
+    const status =
+      document
+        .getElementById(
+          "randomStatus"
+        );
 
-    chooseRandomTarget();
+
+    status.className =
+      "status";
+
+    status.textContent =
+      "";
 
 
-    if (!randomTarget) {
+    // ----------------------------------------
+    // すでに抽選済みなら新しく抽選しない
+    // ----------------------------------------
+
+    if (
+      gameProgress
+        ?.random_current_target_id
+    ) {
+
+      randomTarget =
+        allTargets.find(
+          target =>
+            target.id ===
+            gameProgress
+              .random_current_target_id
+        );
+
+
+      if (!randomTarget) {
+
+        status.className =
+          "status error";
+
+        status.textContent =
+          "保存された抽選結果が見つかりません";
+
+        showScreen(
+          "randomScreen"
+        );
+
+        return;
+
+      }
+
+
+      displayRandomTarget();
+
+      showScreen(
+        "randomScreen"
+      );
 
       return;
 
     }
 
 
-    displayRandomTarget();
+    // ----------------------------------------
+    // 初回抽選
+    // ----------------------------------------
 
-    showScreen(
-      "randomScreen"
-    );
-
-  }
-
-
-  function chooseRandomTarget() {
-
-    const skippedId =
-      gameProgress
-        ?.random_skipped_target_id;
-
-
-    let candidates =
+    const candidates =
       allTargets.filter(
-        target => {
-
-          if (
-            completedTargetIds
-              .has(target.id)
-          ) {
-            return false;
-          }
-
-
-          if (
-            gameProgress
-              ?.random_pass_used &&
-            skippedId &&
-            target.id ===
-              skippedId
-          ) {
-            return false;
-          }
-
-
-          return true;
-
-        }
+        target =>
+          !completedTargetIds
+            .has(target.id)
       );
 
 
     if (
       candidates.length === 0
     ) {
-
-      randomTarget = null;
 
       alert(
         "抽選できる目標がありません"
@@ -1751,11 +1793,95 @@
       );
 
 
-    randomTarget =
+    const newTarget =
       candidates[index];
+
+
+    // 抽選結果を即DBへ保存
+
+    const {
+      error
+    } =
+      await sb
+        .from(
+          "game_progress"
+        )
+        .update({
+
+          random_current_target_id:
+            newTarget.id,
+
+          random_pass_used:
+            false,
+
+          random_skipped_target_id:
+            null,
+
+          updated_at:
+            new Date()
+              .toISOString()
+
+        })
+        .eq(
+          "user_id",
+          currentUser.id
+        )
+        .is(
+          "current_target_id",
+          null
+        )
+        .is(
+          "random_current_target_id",
+          null
+        );
+
+
+    if (error) {
+
+      console.error(error);
+
+      alert(
+        "抽選結果を保存できませんでした"
+      );
+
+      return;
+
+    }
+
+
+    gameProgress
+      .random_current_target_id =
+        newTarget.id;
+
+
+    gameProgress
+      .random_pass_used =
+        false;
+
+
+    gameProgress
+      .random_skipped_target_id =
+        null;
+
+
+    randomTarget =
+      newTarget;
+
+
+    updateSelectionButtons();
+
+    displayRandomTarget();
+
+    showScreen(
+      "randomScreen"
+    );
 
   }
 
+
+  // ==========================================
+  // ランダム画面表示
+  // ==========================================
 
   function displayRandomTarget() {
 
@@ -1820,26 +1946,16 @@
         );
 
 
-    const backButton =
-      document
-        .getElementById(
-          "randomBackButton"
-        );
-
-
     if (passUsed) {
 
       passButton
         .classList
         .add("hidden");
 
+
       mustMessage
         .classList
         .remove("hidden");
-
-      backButton
-        .classList
-        .add("hidden");
 
 
       document
@@ -1863,13 +1979,10 @@
         .classList
         .remove("hidden");
 
+
       mustMessage
         .classList
         .add("hidden");
-
-      backButton
-        .classList
-        .remove("hidden");
 
 
       document
@@ -1901,7 +2014,7 @@
 
 
   // ==========================================
-  // ランダム：パス
+  // パス
   // ==========================================
 
   async function passRandomTarget() {
@@ -1936,9 +2049,65 @@
       "再抽選しています...";
 
 
-    const skippedTargetId =
+    const skippedId =
       randomTarget.id;
 
+
+    // パスした目標以外で候補作成
+
+    const candidates =
+      allTargets.filter(
+        target => {
+
+          if (
+            completedTargetIds
+              .has(target.id)
+          ) {
+            return false;
+          }
+
+
+          if (
+            target.id ===
+            skippedId
+          ) {
+            return false;
+          }
+
+
+          return true;
+
+        }
+      );
+
+
+    if (
+      candidates.length === 0
+    ) {
+
+      status.className =
+        "status error";
+
+      status.textContent =
+        "再抽選できる目標がありません";
+
+      return;
+
+    }
+
+
+    const index =
+      Math.floor(
+        Math.random() *
+        candidates.length
+      );
+
+
+    const secondTarget =
+      candidates[index];
+
+
+    // 2回目をDBに固定
 
     const {
       error
@@ -1953,7 +2122,10 @@
             true,
 
           random_skipped_target_id:
-            skippedTargetId,
+            skippedId,
+
+          random_current_target_id:
+            secondTarget.id,
 
           updated_at:
             new Date()
@@ -1967,6 +2139,10 @@
         .is(
           "current_target_id",
           null
+        )
+        .eq(
+          "random_current_target_id",
+          skippedId
         )
         .eq(
           "random_pass_used",
@@ -1996,24 +2172,19 @@
 
     gameProgress
       .random_skipped_target_id =
-        skippedTargetId;
+        skippedId;
 
 
-    chooseRandomTarget();
+    gameProgress
+      .random_current_target_id =
+        secondTarget.id;
 
 
-    if (!randomTarget) {
+    randomTarget =
+      secondTarget;
 
-      status.className =
-        "status error";
 
-      status.textContent =
-        "再抽選できる目標がありません";
-
-      return;
-
-    }
-
+    updateSelectionButtons();
 
     displayRandomTarget();
 
@@ -2021,7 +2192,7 @@
 
 
   // ==========================================
-  // 手動：挑戦開始
+  // 手動挑戦開始
   // ==========================================
 
   async function startChallenge() {
@@ -2051,7 +2222,8 @@
     const success =
       await saveChallenge(
         selectedTarget,
-        status
+        status,
+        false
       );
 
 
@@ -2074,7 +2246,7 @@
 
 
   // ==========================================
-  // ランダム：挑戦開始
+  // ランダム挑戦開始
   // ==========================================
 
   async function startRandomChallenge() {
@@ -2104,7 +2276,8 @@
     const success =
       await saveChallenge(
         randomTarget,
-        status
+        status,
+        true
       );
 
 
@@ -2127,15 +2300,14 @@
 
 
   // ==========================================
-  // 挑戦をDBへ保存
+  // 挑戦保存
   // ==========================================
 
   async function saveChallenge(
     target,
-    statusElement
+    statusElement,
+    fromRandom
   ) {
-
-    // DBを再確認
 
     const {
       data: latestProgress,
@@ -2147,7 +2319,8 @@
         )
         .select(`
           current_target_id,
-          carry_steps
+          carry_steps,
+          random_current_target_id
         `)
         .eq(
           "user_id",
@@ -2205,6 +2378,52 @@
     }
 
 
+    // ランダムの場合、
+    // DBに固定された目標と一致しているか確認
+
+    if (fromRandom) {
+
+      if (
+        latestProgress
+          .random_current_target_id !==
+        target.id
+      ) {
+
+        statusElement.className =
+          "status error";
+
+        statusElement.textContent =
+          "抽選結果が一致しません";
+
+        return false;
+
+      }
+
+    }
+
+
+    // 手動なのにランダム抽選中なら禁止
+
+    if (!fromRandom) {
+
+      if (
+        latestProgress
+          .random_current_target_id
+      ) {
+
+        statusElement.className =
+          "status error";
+
+        statusElement.textContent =
+          "ランダム抽選中の目標があります";
+
+        return false;
+
+      }
+
+    }
+
+
     const carrySteps =
       Number(
         latestProgress
@@ -2234,6 +2453,9 @@
             false,
 
           random_skipped_target_id:
+            null,
+
+          random_current_target_id:
             null,
 
           updated_at:
@@ -2274,21 +2496,17 @@
 
 
   // ==========================================
-  // ランダム選択キャンセル
+  // ランダム画面から戻る
   // ==========================================
 
-  function cancelRandomSelection() {
+  function leaveRandomScreen() {
 
-    // パス前だけ戻れる
-    if (
-      gameProgress
-        ?.random_pass_used
-    ) {
-      return;
-    }
-
+    // 抽選結果そのものは消さない
+    // DBに保存されたまま
 
     randomTarget = null;
+
+    updateSelectionButtons();
 
     showScreen(
       "mainScreen"
@@ -2298,7 +2516,7 @@
 
 
   // ==========================================
-  // 戻る
+  // 通常の戻る
   // ==========================================
 
   function backToMain() {

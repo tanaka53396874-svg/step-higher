@@ -10,20 +10,14 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
       background: #f3f5f7;
       color: #222;
-      font-family:
-        -apple-system,
-        BlinkMacSystemFont,
-        "Helvetica Neue",
-        Arial,
-        sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont,
+                   "Helvetica Neue", Arial, sans-serif;
     }
 
     .app {
@@ -51,7 +45,7 @@
       border-radius: 16px;
       padding: 18px;
       margin-bottom: 14px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+      box-shadow: 0 2px 10px rgba(0,0,0,.06);
     }
 
     .label {
@@ -96,7 +90,7 @@
       width: 0%;
       height: 100%;
       background: #333;
-      transition: width 0.3s;
+      transition: width .3s;
     }
 
     .counts {
@@ -149,13 +143,11 @@
     }
 
     button:disabled {
-      opacity: 0.45;
+      opacity: .45;
       cursor: default;
     }
 
-    .login {
-      margin-top: 18px;
-    }
+    .login { margin-top: 18px; }
 
     input {
       width: 100%;
@@ -174,13 +166,14 @@
       line-height: 1.5;
     }
 
-    .error {
-      color: #c62828;
+    .error { color: #c62828; }
+
+    .success {
+      color: #1b5e20;
+      font-weight: 700;
     }
 
-    .hidden {
-      display: none !important;
-    }
+    .hidden { display: none !important; }
 
     .screen-title {
       font-size: 25px;
@@ -221,16 +214,12 @@
       background: white;
       border-radius: 14px;
       padding: 14px 15px;
-      box-shadow: 0 1px 7px rgba(0,0,0,0.05);
+      box-shadow: 0 1px 7px rgba(0,0,0,.05);
       cursor: pointer;
     }
 
-    .target-item:active {
-      transform: scale(0.99);
-    }
-
     .target-item.completed {
-      opacity: 0.48;
+      opacity: .48;
       cursor: default;
     }
 
@@ -256,9 +245,7 @@
       font-weight: 700;
     }
 
-    .back-button {
-      margin-bottom: 15px;
-    }
+    .back-button { margin-bottom: 15px; }
 
     .confirm-box {
       text-align: center;
@@ -309,21 +296,13 @@
 
 <div class="app">
 
-  <!-- ログイン -->
-
   <div id="loginScreen">
 
     <h1>STEP HIGHER</h1>
-
-    <div class="subtitle">
-      歩いて世界の建造物と山を制覇
-    </div>
+    <div class="subtitle">歩いて世界の建造物と山を制覇</div>
 
     <div class="card login">
-
-      <div class="label">
-        Supabaseにログイン
-      </div>
+      <div class="label">Supabaseにログイン</div>
 
       <input id="email"
              type="email"
@@ -339,45 +318,30 @@
       </button>
 
       <div id="loginStatus"
-           class="status">
-      </div>
-
+           class="status"></div>
     </div>
 
   </div>
 
 
-  <!-- メイン -->
-
-  <div id="mainScreen"
-       class="hidden">
+  <div id="mainScreen" class="hidden">
 
     <h1>STEP HIGHER</h1>
-
-    <div class="subtitle">
-      歩いて世界の建造物と山を制覇
-    </div>
-
+    <div class="subtitle">歩いて世界の建造物と山を制覇</div>
 
     <div class="card">
-
-      <div class="label">
-        今日の歩数
-      </div>
+      <div class="label">今日の歩数</div>
 
       <div class="big-number">
         <span id="todaySteps">0</span>
         <span class="unit">歩</span>
       </div>
-
     </div>
 
 
     <div class="card">
 
-      <div class="label">
-        制覇数
-      </div>
+      <div class="label">制覇数</div>
 
       <div class="big-number">
         <span id="completedTotal">0</span>
@@ -387,39 +351,28 @@
       <div class="counts">
 
         <div class="count-box">
-          <div class="count-title">
-            建造物
-          </div>
+          <div class="count-title">建造物</div>
 
           <div class="count-number">
-            <span id="completedBuildings">0</span>
-            / 50
+            <span id="completedBuildings">0</span> / 50
           </div>
         </div>
 
         <div class="count-box">
-
-          <div class="count-title">
-            山
-          </div>
+          <div class="count-title">山</div>
 
           <div class="count-number">
-            <span id="completedMountains">0</span>
-            / 50
+            <span id="completedMountains">0</span> / 50
           </div>
-
         </div>
 
       </div>
-
     </div>
 
 
     <div class="card">
 
-      <div class="label">
-        現在の挑戦
-      </div>
+      <div class="label">現在の挑戦</div>
 
       <div id="currentTargetName"
            class="target-name">
@@ -427,26 +380,21 @@
       </div>
 
       <div id="currentTargetInfo"
-           class="target-info">
-      </div>
+           class="target-info"></div>
 
       <div id="progressBar"
            class="progress-bar hidden">
 
         <div id="progressFill"
-             class="progress-fill">
-        </div>
+             class="progress-fill"></div>
 
       </div>
-
     </div>
 
 
     <div class="card">
 
-      <div class="label">
-        持ち越し歩数
-      </div>
+      <div class="label">持ち越し歩数</div>
 
       <div class="big-number">
         <span id="carrySteps">0</span>
@@ -471,23 +419,18 @@
       </button>
 
       <div id="selectionStatus"
-           class="status">
-      </div>
+           class="status"></div>
 
     </div>
 
 
     <div id="appStatus"
-         class="status">
-    </div>
+         class="status"></div>
 
   </div>
 
 
-  <!-- 手動一覧 -->
-
-  <div id="targetScreen"
-       class="hidden">
+  <div id="targetScreen" class="hidden">
 
     <button class="secondary back-button"
             onclick="backToMain()">
@@ -497,7 +440,6 @@
     <div class="screen-title">
       挑戦する目標を選ぶ
     </div>
-
 
     <div class="filter-buttons">
 
@@ -521,38 +463,28 @@
 
     </div>
 
-
     <div id="targetList"
-         class="target-list">
-    </div>
+         class="target-list"></div>
 
   </div>
 
 
-  <!-- 手動確認 -->
-
-  <div id="confirmScreen"
-       class="hidden">
+  <div id="confirmScreen" class="hidden">
 
     <button class="secondary back-button"
             onclick="backToTargetList()">
       ← 選び直す
     </button>
 
-
     <div class="card confirm-box">
 
-      <div class="label">
-        次の挑戦
-      </div>
+      <div class="label">次の挑戦</div>
 
       <div id="confirmName"
-           class="confirm-name">
-      </div>
+           class="confirm-name"></div>
 
       <div id="confirmDetails"
-           class="confirm-details">
-      </div>
+           class="confirm-details"></div>
 
       <div class="confirm-question">
         この目標に挑戦しますか？
@@ -565,30 +497,22 @@
 
     </div>
 
-
     <div id="confirmStatus"
-         class="status">
-    </div>
+         class="status"></div>
 
   </div>
 
 
-  <!-- ランダム -->
+  <div id="randomScreen" class="hidden">
 
-  <div id="randomScreen"
-       class="hidden">
-
-    <button id="randomBackButton"
-            class="secondary back-button"
+    <button class="secondary back-button"
             onclick="leaveRandomScreen()">
       ← 戻る
     </button>
 
-
     <div class="screen-title">
       ランダムチャレンジ
     </div>
-
 
     <div class="card confirm-box">
 
@@ -598,12 +522,10 @@
       </div>
 
       <div id="randomName"
-           class="confirm-name">
-      </div>
+           class="confirm-name"></div>
 
       <div id="randomDetails"
-           class="confirm-details">
-      </div>
+           class="confirm-details"></div>
 
       <div id="randomQuestion"
            class="confirm-question">
@@ -615,8 +537,7 @@
         パスを使用済みです。この目標に挑戦します。
       </div>
 
-      <button id="randomChallengeButton"
-              class="primary"
+      <button class="primary"
               onclick="startRandomChallenge()">
         挑戦する
       </button>
@@ -629,10 +550,8 @@
 
     </div>
 
-
     <div id="randomStatus"
-         class="status">
-    </div>
+         class="status"></div>
 
   </div>
 
@@ -658,24 +577,16 @@
     );
 
 
-  // ==========================================
-  // アプリ状態
-  // ==========================================
-
   let currentUser = null;
-
   let gameProgress = null;
-
   let allTargets = [];
-
-  let completedTargetIds =
-    new Set();
+  let completedTargetIds = new Set();
 
   let selectedTarget = null;
-
   let randomTarget = null;
-
   let currentFilter = "all";
+
+  let stepsAppliedThisLoad = false;
 
 
   // ==========================================
@@ -697,11 +608,9 @@
         currentUser =
           session.user;
 
-        showScreen(
-          "mainScreen"
-        );
+        showScreen("mainScreen");
 
-        await loadData();
+        await startApp();
 
       }
 
@@ -730,27 +639,21 @@
 
     const status =
       document
-        .getElementById(
-          "loginStatus"
-        );
+        .getElementById("loginStatus");
 
 
-    status.className =
-      "status";
-
-    status.textContent =
-      "ログイン中...";
+    status.className = "status";
+    status.textContent = "ログイン中...";
 
 
     const {
       data,
       error
     } =
-      await sb.auth
-        .signInWithPassword({
-          email,
-          password
-        });
+      await sb.auth.signInWithPassword({
+        email,
+        password
+      });
 
 
     if (error) {
@@ -764,7 +667,6 @@
         "ログインできませんでした";
 
       return;
-
     }
 
 
@@ -774,13 +676,134 @@
 
     status.textContent = "";
 
+    showScreen("mainScreen");
 
-    showScreen(
-      "mainScreen"
-    );
+    await startApp();
+
+  }
 
 
-    await loadData();
+  // ==========================================
+  // アプリ開始
+  // ==========================================
+
+  async function startApp() {
+
+    stepsAppliedThisLoad = false;
+
+    await loadData(false);
+
+    if (!gameProgress) {
+      return;
+    }
+
+    await applySteps();
+
+    await loadData(true);
+
+  }
+
+
+  // ==========================================
+  // 未反映歩数をゲームへ適用
+  // ==========================================
+
+  async function applySteps() {
+
+    if (stepsAppliedThisLoad) {
+      return;
+    }
+
+
+    stepsAppliedThisLoad = true;
+
+
+    const status =
+      document
+        .getElementById("appStatus");
+
+
+    status.className = "status";
+
+    status.textContent =
+      "歩数を反映しています...";
+
+
+    const {
+      data,
+      error
+    } =
+      await sb.rpc(
+        "apply_unapplied_steps"
+      );
+
+
+    if (error) {
+
+      console.error(error);
+
+      status.className =
+        "status error";
+
+      status.textContent =
+        "歩数の反映に失敗しました";
+
+      return;
+    }
+
+
+    const applied =
+      Number(
+        data?.applied ?? 0
+      );
+
+
+    const completedTargetId =
+      data?.completed_target_id;
+
+
+    if (completedTargetId) {
+
+      const target =
+        allTargets.find(
+          item =>
+            item.id ===
+            Number(completedTargetId)
+        );
+
+
+      status.className =
+        "status success";
+
+
+      if (target) {
+
+        status.textContent =
+          `${target.name_ja}を制覇しました！`;
+
+      } else {
+
+        status.textContent =
+          "目標を制覇しました！";
+
+      }
+
+
+      return;
+    }
+
+
+    if (applied > 0) {
+
+      status.textContent =
+        `${applied.toLocaleString()}歩を反映しました`;
+
+    } else {
+
+      status.textContent =
+        "";
+
+    }
 
   }
 
@@ -789,9 +812,7 @@
   // 画面切替
   // ==========================================
 
-  function showScreen(
-    screenId
-  ) {
+  function showScreen(screenId) {
 
     const screens = [
       "loginScreen",
@@ -802,9 +823,7 @@
     ];
 
 
-    for (
-      const id of screens
-    ) {
+    for (const id of screens) {
 
       document
         .getElementById(id)
@@ -815,39 +834,37 @@
 
 
     document
-      .getElementById(
-        screenId
-      )
+      .getElementById(screenId)
       .classList
       .remove("hidden");
 
 
-    window.scrollTo(
-      0,
-      0
-    );
+    window.scrollTo(0, 0);
 
   }
 
 
   // ==========================================
-  // 全データ読み込み
+  // データ取得
   // ==========================================
 
-  async function loadData() {
+  async function loadData(
+    keepStatus = false
+  ) {
 
     const status =
       document
-        .getElementById(
-          "appStatus"
-        );
+        .getElementById("appStatus");
 
 
-    status.className =
-      "status";
+    if (!keepStatus) {
 
-    status.textContent =
-      "データを読み込んでいます...";
+      status.className = "status";
+
+      status.textContent =
+        "データを読み込んでいます...";
+
+    }
 
 
     if (!currentUser) {
@@ -877,17 +894,10 @@
       new Intl.DateTimeFormat(
         "en-CA",
         {
-          timeZone:
-            "Asia/Tokyo",
-
-          year:
-            "numeric",
-
-          month:
-            "2-digit",
-
-          day:
-            "2-digit"
+          timeZone: "Asia/Tokyo",
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit"
         }
       ).format(
         new Date()
@@ -902,23 +912,15 @@
     } =
       await sb
         .from("daily_steps")
-        .select("steps")
-        .eq(
-          "user_id",
-          currentUser.id
-        )
-        .eq(
-          "step_date",
-          today
-        )
+        .select("steps,applied_steps")
+        .eq("user_id", currentUser.id)
+        .eq("step_date", today)
         .maybeSingle();
 
 
     if (stepError) {
 
-      console.error(
-        stepError
-      );
+      console.error(stepError);
 
       showError(
         "歩数データを取得できませんでした"
@@ -930,9 +932,7 @@
 
 
     document
-      .getElementById(
-        "todaySteps"
-      )
+      .getElementById("todaySteps")
       .textContent =
         Number(
           stepData?.steps ?? 0
@@ -956,18 +956,13 @@
           random_skipped_target_id,
           random_current_target_id
         `)
-        .eq(
-          "user_id",
-          currentUser.id
-        )
+        .eq("user_id", currentUser.id)
         .maybeSingle();
 
 
     if (progressError) {
 
-      console.error(
-        progressError
-      );
+      console.error(progressError);
 
       showError(
         "ゲーム進行データを取得できませんでした"
@@ -978,8 +973,7 @@
     }
 
 
-    gameProgress =
-      progress;
+    gameProgress = progress;
 
 
     if (!gameProgress) {
@@ -994,13 +988,10 @@
 
 
     document
-      .getElementById(
-        "carrySteps"
-      )
+      .getElementById("carrySteps")
       .textContent =
         Number(
-          gameProgress
-            .carry_steps ?? 0
+          gameProgress.carry_steps ?? 0
         ).toLocaleString();
 
 
@@ -1026,9 +1017,7 @@
 
     if (targetsError) {
 
-      console.error(
-        targetsError
-      );
+      console.error(targetsError);
 
       showError(
         "目標データを取得できませんでした"
@@ -1043,7 +1032,7 @@
       targets ?? [];
 
 
-    // クリア履歴
+    // 制覇履歴
 
     const cycle =
       gameProgress.cycle ?? 1;
@@ -1054,27 +1043,15 @@
       error: completionError
     } =
       await sb
-        .from(
-          "target_completions"
-        )
-        .select(
-          "target_id"
-        )
-        .eq(
-          "user_id",
-          currentUser.id
-        )
-        .eq(
-          "cycle",
-          cycle
-        );
+        .from("target_completions")
+        .select("target_id")
+        .eq("user_id", currentUser.id)
+        .eq("cycle", cycle);
 
 
     if (completionError) {
 
-      console.error(
-        completionError
-      );
+      console.error(completionError);
 
       showError(
         "クリア履歴を取得できませんでした"
@@ -1089,23 +1066,16 @@
       new Set(
         (completions ?? [])
           .map(
-            item =>
-              item.target_id
+            item => item.target_id
           )
       );
 
 
-    // 制覇数
-
     let buildingCount = 0;
-
     let mountainCount = 0;
 
 
-    for (
-      const target
-      of allTargets
-    ) {
+    for (const target of allTargets) {
 
       if (
         !completedTargetIds
@@ -1134,25 +1104,19 @@
 
 
     document
-      .getElementById(
-        "completedTotal"
-      )
+      .getElementById("completedTotal")
       .textContent =
         completedTargetIds.size;
 
 
     document
-      .getElementById(
-        "completedBuildings"
-      )
+      .getElementById("completedBuildings")
       .textContent =
         buildingCount;
 
 
     document
-      .getElementById(
-        "completedMountains"
-      )
+      .getElementById("completedMountains")
       .textContent =
         mountainCount;
 
@@ -1162,49 +1126,46 @@
     updateSelectionButtons();
 
 
-    status.textContent =
-      "Supabaseとの接続は正常です";
+    if (!keepStatus) {
+
+      status.textContent =
+        "Supabaseとの接続は正常です";
+
+    }
 
   }
 
 
   // ==========================================
-  // メインボタン状態
+  // メインボタン
   // ==========================================
 
   function updateSelectionButtons() {
 
     const manualButton =
       document
-        .getElementById(
-          "manualButton"
-        );
+        .getElementById("manualButton");
 
 
     const randomButton =
       document
-        .getElementById(
-          "randomButton"
-        );
+        .getElementById("randomButton");
 
 
     const selectionStatus =
       document
-        .getElementById(
-          "selectionStatus"
-        );
+        .getElementById("selectionStatus");
 
 
     if (
-      gameProgress
-        ?.current_target_id
+      gameProgress?.current_target_id
     ) {
 
-      manualButton.disabled =
-        true;
+      manualButton.disabled = true;
+      randomButton.disabled = true;
 
-      randomButton.disabled =
-        true;
+      randomButton.textContent =
+        "ランダムで選ぶ";
 
       selectionStatus.textContent =
         "現在の目標をクリアすると次を選べます";
@@ -1215,15 +1176,11 @@
 
 
     if (
-      completedTargetIds.size >=
-      100
+      completedTargetIds.size >= 100
     ) {
 
-      manualButton.disabled =
-        true;
-
-      randomButton.disabled =
-        true;
+      manualButton.disabled = true;
+      randomButton.disabled = true;
 
       selectionStatus.textContent =
         "100 / 100 制覇達成！";
@@ -1233,22 +1190,16 @@
     }
 
 
-    // ランダム抽選がすでに始まっている場合、
-    // 手動選択への逃げ道も塞ぐ
-
     if (
-      gameProgress
-        ?.random_current_target_id
+      gameProgress?.random_current_target_id
     ) {
 
-      manualButton.disabled =
-        true;
-
-      randomButton.disabled =
-        false;
+      manualButton.disabled = true;
+      randomButton.disabled = false;
 
       randomButton.textContent =
         "ランダム抽選を続ける";
+
 
       selectionStatus.textContent =
         gameProgress.random_pass_used
@@ -1260,17 +1211,13 @@
     }
 
 
-    manualButton.disabled =
-      false;
-
-    randomButton.disabled =
-      false;
+    manualButton.disabled = false;
+    randomButton.disabled = false;
 
     randomButton.textContent =
       "ランダムで選ぶ";
 
-    selectionStatus.textContent =
-      "";
+    selectionStatus.textContent = "";
 
   }
 
@@ -1282,64 +1229,47 @@
   function displayCurrentChallenge() {
 
     const targetId =
-      gameProgress
-        ?.current_target_id;
+      gameProgress?.current_target_id;
 
 
     if (!targetId) {
 
       document
-        .getElementById(
-          "currentTargetName"
-        )
+        .getElementById("currentTargetName")
         .textContent =
           "まだ選択されていません";
 
 
       document
-        .getElementById(
-          "currentTargetInfo"
-        )
-        .textContent =
-          "";
+        .getElementById("currentTargetInfo")
+        .textContent = "";
 
 
       document
-        .getElementById(
-          "progressBar"
-        )
+        .getElementById("progressBar")
         .classList
         .add("hidden");
 
 
       return;
-
     }
 
 
     const target =
       allTargets.find(
         item =>
-          item.id ===
-          targetId
+          item.id === targetId
       );
 
 
     if (!target) {
-
-      showError(
-        "現在の目標が見つかりません"
-      );
-
       return;
-
     }
 
 
     const currentSteps =
       Number(
-        gameProgress
-          .current_steps ?? 0
+        gameProgress.current_steps ?? 0
       );
 
 
@@ -1351,38 +1281,28 @@
 
     const remaining =
       Math.max(
-        requiredSteps -
-        currentSteps,
+        requiredSteps - currentSteps,
         0
       );
 
 
     document
-      .getElementById(
-        "currentTargetName"
-      )
+      .getElementById("currentTargetName")
       .textContent =
         target.name_ja;
 
 
     document
-      .getElementById(
-        "currentTargetInfo"
-      )
+      .getElementById("currentTargetInfo")
       .innerHTML =
-        `
-        ${escapeHtml(target.country)}
-        <br>
-        高さ：
-        ${Number(target.height_m).toLocaleString()}m
-        <br>
-        ${currentSteps.toLocaleString()}
-        /
-        ${requiredSteps.toLocaleString()}歩
-        <br>
-        あと
-        ${remaining.toLocaleString()}歩
-        `;
+        `${escapeHtml(target.country)}
+         <br>
+         高さ：${Number(target.height_m).toLocaleString()}m
+         <br>
+         ${currentSteps.toLocaleString()} /
+         ${requiredSteps.toLocaleString()}歩
+         <br>
+         あと ${remaining.toLocaleString()}歩`;
 
 
     const ratio =
@@ -1395,17 +1315,13 @@
 
 
     document
-      .getElementById(
-        "progressBar"
-      )
+      .getElementById("progressBar")
       .classList
       .remove("hidden");
 
 
     document
-      .getElementById(
-        "progressFill"
-      )
+      .getElementById("progressFill")
       .style.width =
         ratio + "%";
 
@@ -1419,43 +1335,27 @@
   function openTargetList() {
 
     if (
-      gameProgress
-        ?.current_target_id
+      gameProgress?.current_target_id ||
+      gameProgress?.random_current_target_id
     ) {
       return;
     }
 
 
-    if (
-      gameProgress
-        ?.random_current_target_id
-    ) {
-      return;
-    }
-
-
-    currentFilter =
-      "all";
-
+    currentFilter = "all";
 
     updateFilterButtons();
 
     renderTargetList();
 
-
-    showScreen(
-      "targetScreen"
-    );
+    showScreen("targetScreen");
 
   }
 
 
-  function setFilter(
-    filter
-  ) {
+  function setFilter(filter) {
 
-    currentFilter =
-      filter;
+    currentFilter = filter;
 
     updateFilterButtons();
 
@@ -1467,33 +1367,20 @@
   function updateFilterButtons() {
 
     const buttons = {
-
       all:
-        document
-          .getElementById(
-            "filterAll"
-          ),
+        document.getElementById("filterAll"),
 
       building:
-        document
-          .getElementById(
-            "filterBuilding"
-          ),
+        document.getElementById("filterBuilding"),
 
       mountain:
-        document
-          .getElementById(
-            "filterMountain"
-          )
-
+        document.getElementById("filterMountain")
     };
 
 
     for (
       const [key, button]
-      of Object.entries(
-        buttons
-      )
+      of Object.entries(buttons)
     ) {
 
       button.className =
@@ -1510,9 +1397,7 @@
 
     const list =
       document
-        .getElementById(
-          "targetList"
-        );
+        .getElementById("targetList");
 
 
     list.innerHTML = "";
@@ -1520,28 +1405,14 @@
 
     const targets =
       allTargets.filter(
-        target => {
-
-          if (
-            currentFilter ===
-            "all"
-          ) {
-            return true;
-          }
-
-          return (
-            target.category ===
-            currentFilter
-          );
-
-        }
+        target =>
+          currentFilter === "all"
+            ? true
+            : target.category === currentFilter
       );
 
 
-    for (
-      const target
-      of targets
-    ) {
+    for (const target of targets) {
 
       const completed =
         completedTargetIds
@@ -1549,24 +1420,18 @@
 
 
       const item =
-        document
-          .createElement(
-            "div"
-          );
+        document.createElement("div");
 
 
       item.className =
         "target-item" +
-        (
-          completed
-            ? " completed"
-            : ""
-        );
+        (completed
+          ? " completed"
+          : "");
 
 
       const categoryName =
-        target.category ===
-        "building"
+        target.category === "building"
           ? "建造物"
           : "山";
 
@@ -1578,24 +1443,15 @@
         </div>
 
         <div class="target-item-details">
-          ${categoryName}
-          ・
-          ${escapeHtml(target.country)}
+          ${categoryName}・${escapeHtml(target.country)}
           <br>
-
-          高さ
-          ${Number(target.height_m).toLocaleString()}m
-          ・
+          高さ ${Number(target.height_m).toLocaleString()}m・
           ${Number(target.required_steps).toLocaleString()}歩
         </div>
 
         ${
           completed
-            ? `
-              <div class="completed-label">
-                制覇済み
-              </div>
-            `
+            ? `<div class="completed-label">制覇済み</div>`
             : ""
         }
         `;
@@ -1605,27 +1461,20 @@
 
         item.addEventListener(
           "click",
-          () =>
-            selectTarget(
-              target.id
-            )
+          () => selectTarget(target.id)
         );
 
       }
 
 
-      list.appendChild(
-        item
-      );
+      list.appendChild(item);
 
     }
 
   }
 
 
-  function selectTarget(
-    targetId
-  ) {
+  function selectTarget(targetId) {
 
     if (
       completedTargetIds
@@ -1638,8 +1487,7 @@
     selectedTarget =
       allTargets.find(
         item =>
-          item.id ===
-          targetId
+          item.id === targetId
       );
 
 
@@ -1649,121 +1497,69 @@
 
 
     document
-      .getElementById(
-        "confirmName"
-      )
+      .getElementById("confirmName")
       .textContent =
         selectedTarget.name_ja;
 
 
     document
-      .getElementById(
-        "confirmDetails"
-      )
+      .getElementById("confirmDetails")
       .innerHTML =
-        `
-        ${escapeHtml(selectedTarget.country)}
-        <br>
-        高さ：
-        ${Number(selectedTarget.height_m).toLocaleString()}m
-        <br>
-        必要歩数：
-        ${Number(selectedTarget.required_steps).toLocaleString()}歩
-        `;
+        `${escapeHtml(selectedTarget.country)}
+         <br>
+         高さ：${Number(selectedTarget.height_m).toLocaleString()}m
+         <br>
+         必要歩数：${Number(selectedTarget.required_steps).toLocaleString()}歩`;
 
 
     document
-      .getElementById(
-        "confirmStatus"
-      )
-      .textContent =
-        "";
+      .getElementById("confirmStatus")
+      .textContent = "";
 
 
-    showScreen(
-      "confirmScreen"
-    );
+    showScreen("confirmScreen");
 
   }
 
 
   // ==========================================
-  // ランダム選択
+  // ランダム
   // ==========================================
 
   async function openRandomTarget() {
 
     if (
-      gameProgress
-        ?.current_target_id
+      gameProgress?.current_target_id
     ) {
       return;
     }
 
 
-    const status =
-      document
-        .getElementById(
-          "randomStatus"
-        );
-
-
-    status.className =
-      "status";
-
-    status.textContent =
-      "";
-
-
-    // ----------------------------------------
-    // すでに抽選済みなら新しく抽選しない
-    // ----------------------------------------
-
     if (
-      gameProgress
-        ?.random_current_target_id
+      gameProgress?.random_current_target_id
     ) {
 
       randomTarget =
         allTargets.find(
           target =>
             target.id ===
-            gameProgress
-              .random_current_target_id
+            gameProgress.random_current_target_id
         );
 
 
       if (!randomTarget) {
-
-        status.className =
-          "status error";
-
-        status.textContent =
-          "保存された抽選結果が見つかりません";
-
-        showScreen(
-          "randomScreen"
-        );
-
         return;
-
       }
 
 
       displayRandomTarget();
 
-      showScreen(
-        "randomScreen"
-      );
+      showScreen("randomScreen");
 
       return;
 
     }
 
-
-    // ----------------------------------------
-    // 初回抽選
-    // ----------------------------------------
 
     const candidates =
       allTargets.filter(
@@ -1773,41 +1569,26 @@
       );
 
 
-    if (
-      candidates.length === 0
-    ) {
-
-      alert(
-        "抽選できる目標がありません"
-      );
-
+    if (!candidates.length) {
       return;
-
     }
 
 
-    const index =
-      Math.floor(
-        Math.random() *
-        candidates.length
-      );
-
-
     const newTarget =
-      candidates[index];
+      candidates[
+        Math.floor(
+          Math.random() *
+          candidates.length
+        )
+      ];
 
-
-    // 抽選結果を即DBへ保存
 
     const {
       error
     } =
       await sb
-        .from(
-          "game_progress"
-        )
+        .from("game_progress")
         .update({
-
           random_current_target_id:
             newTarget.id,
 
@@ -1818,22 +1599,11 @@
             null,
 
           updated_at:
-            new Date()
-              .toISOString()
-
+            new Date().toISOString()
         })
-        .eq(
-          "user_id",
-          currentUser.id
-        )
-        .is(
-          "current_target_id",
-          null
-        )
-        .is(
-          "random_current_target_id",
-          null
-        );
+        .eq("user_id", currentUser.id)
+        .is("current_target_id", null)
+        .is("random_current_target_id", null);
 
 
     if (error) {
@@ -1845,24 +1615,17 @@
       );
 
       return;
-
     }
 
 
-    gameProgress
-      .random_current_target_id =
-        newTarget.id;
+    gameProgress.random_current_target_id =
+      newTarget.id;
 
+    gameProgress.random_pass_used =
+      false;
 
-    gameProgress
-      .random_pass_used =
-        false;
-
-
-    gameProgress
-      .random_skipped_target_id =
-        null;
-
+    gameProgress.random_skipped_target_id =
+      null;
 
     randomTarget =
       newTarget;
@@ -1872,16 +1635,10 @@
 
     displayRandomTarget();
 
-    showScreen(
-      "randomScreen"
-    );
+    showScreen("randomScreen");
 
   }
 
-
-  // ==========================================
-  // ランダム画面表示
-  // ==========================================
 
   function displayRandomTarget() {
 
@@ -1890,60 +1647,42 @@
     }
 
 
-    document
-      .getElementById(
-        "randomName"
-      )
-      .textContent =
-        randomTarget.name_ja;
-
-
     const categoryName =
-      randomTarget.category ===
-      "building"
+      randomTarget.category === "building"
         ? "建造物"
         : "山";
 
 
     document
-      .getElementById(
-        "randomDetails"
-      )
+      .getElementById("randomName")
+      .textContent =
+        randomTarget.name_ja;
+
+
+    document
+      .getElementById("randomDetails")
       .innerHTML =
-        `
-        ${categoryName}
-        ・
-        ${escapeHtml(randomTarget.country)}
-        <br>
-
-        高さ：
-        ${Number(randomTarget.height_m).toLocaleString()}m
-        <br>
-
-        必要歩数：
-        ${Number(randomTarget.required_steps).toLocaleString()}歩
-        `;
+        `${categoryName}・${escapeHtml(randomTarget.country)}
+         <br>
+         高さ：${Number(randomTarget.height_m).toLocaleString()}m
+         <br>
+         必要歩数：${Number(randomTarget.required_steps).toLocaleString()}歩`;
 
 
     const passUsed =
       Boolean(
-        gameProgress
-          ?.random_pass_used
+        gameProgress?.random_pass_used
       );
 
 
     const passButton =
       document
-        .getElementById(
-          "passButton"
-        );
+        .getElementById("passButton");
 
 
-    const mustMessage =
+    const message =
       document
-        .getElementById(
-          "mustChallengeMessage"
-        );
+        .getElementById("mustChallengeMessage");
 
 
     if (passUsed) {
@@ -1952,24 +1691,19 @@
         .classList
         .add("hidden");
 
-
-      mustMessage
+      message
         .classList
         .remove("hidden");
 
 
       document
-        .getElementById(
-          "randomBadge"
-        )
+        .getElementById("randomBadge")
         .textContent =
           "再抽選";
 
 
       document
-        .getElementById(
-          "randomQuestion"
-        )
+        .getElementById("randomQuestion")
         .textContent =
           "この目標に挑戦します";
 
@@ -1979,167 +1713,85 @@
         .classList
         .remove("hidden");
 
-
-      mustMessage
+      message
         .classList
         .add("hidden");
 
 
       document
-        .getElementById(
-          "randomBadge"
-        )
+        .getElementById("randomBadge")
         .textContent =
           "ランダム抽選";
 
 
       document
-        .getElementById(
-          "randomQuestion"
-        )
+        .getElementById("randomQuestion")
         .textContent =
           "この目標に挑戦しますか？";
 
     }
 
-
-    document
-      .getElementById(
-        "randomStatus"
-      )
-      .textContent =
-        "";
-
   }
 
-
-  // ==========================================
-  // パス
-  // ==========================================
 
   async function passRandomTarget() {
 
     if (
       !randomTarget ||
-      !currentUser
+      gameProgress?.random_pass_used
     ) {
       return;
     }
-
-
-    if (
-      gameProgress
-        ?.random_pass_used
-    ) {
-      return;
-    }
-
-
-    const status =
-      document
-        .getElementById(
-          "randomStatus"
-        );
-
-
-    status.className =
-      "status";
-
-    status.textContent =
-      "再抽選しています...";
 
 
     const skippedId =
       randomTarget.id;
 
 
-    // パスした目標以外で候補作成
-
     const candidates =
       allTargets.filter(
-        target => {
-
-          if (
-            completedTargetIds
-              .has(target.id)
-          ) {
-            return false;
-          }
-
-
-          if (
-            target.id ===
-            skippedId
-          ) {
-            return false;
-          }
-
-
-          return true;
-
-        }
+        target =>
+          !completedTargetIds.has(target.id) &&
+          target.id !== skippedId
       );
 
 
-    if (
-      candidates.length === 0
-    ) {
+    if (!candidates.length) {
 
-      status.className =
-        "status error";
-
-      status.textContent =
-        "再抽選できる目標がありません";
+      document
+        .getElementById("randomStatus")
+        .textContent =
+          "再抽選できる目標がありません";
 
       return;
-
     }
 
 
-    const index =
-      Math.floor(
-        Math.random() *
-        candidates.length
-      );
-
-
     const secondTarget =
-      candidates[index];
+      candidates[
+        Math.floor(
+          Math.random() *
+          candidates.length
+        )
+      ];
 
-
-    // 2回目をDBに固定
 
     const {
       error
     } =
       await sb
-        .from(
-          "game_progress"
-        )
+        .from("game_progress")
         .update({
-
-          random_pass_used:
-            true,
-
+          random_pass_used: true,
           random_skipped_target_id:
             skippedId,
-
           random_current_target_id:
             secondTarget.id,
-
           updated_at:
-            new Date()
-              .toISOString()
-
+            new Date().toISOString()
         })
-        .eq(
-          "user_id",
-          currentUser.id
-        )
-        .is(
-          "current_target_id",
-          null
-        )
+        .eq("user_id", currentUser.id)
+        .is("current_target_id", null)
         .eq(
           "random_current_target_id",
           skippedId
@@ -2154,31 +1806,23 @@
 
       console.error(error);
 
-      status.className =
-        "status error";
-
-      status.textContent =
-        "パスを登録できませんでした";
+      document
+        .getElementById("randomStatus")
+        .textContent =
+          "パスを登録できませんでした";
 
       return;
-
     }
 
 
-    gameProgress
-      .random_pass_used =
-        true;
+    gameProgress.random_pass_used =
+      true;
 
+    gameProgress.random_skipped_target_id =
+      skippedId;
 
-    gameProgress
-      .random_skipped_target_id =
-        skippedId;
-
-
-    gameProgress
-      .random_current_target_id =
-        secondTarget.id;
-
+    gameProgress.random_current_target_id =
+      secondTarget.id;
 
     randomTarget =
       secondTarget;
@@ -2192,31 +1836,19 @@
 
 
   // ==========================================
-  // 手動挑戦開始
+  // 挑戦開始
   // ==========================================
 
   async function startChallenge() {
 
-    if (
-      !selectedTarget ||
-      !currentUser
-    ) {
+    if (!selectedTarget) {
       return;
     }
 
 
     const status =
       document
-        .getElementById(
-          "confirmStatus"
-        );
-
-
-    status.className =
-      "status";
-
-    status.textContent =
-      "登録しています...";
+        .getElementById("confirmStatus");
 
 
     const success =
@@ -2234,43 +1866,23 @@
 
     selectedTarget = null;
 
+    await loadData(true);
 
-    await loadData();
-
-
-    showScreen(
-      "mainScreen"
-    );
+    showScreen("mainScreen");
 
   }
 
 
-  // ==========================================
-  // ランダム挑戦開始
-  // ==========================================
-
   async function startRandomChallenge() {
 
-    if (
-      !randomTarget ||
-      !currentUser
-    ) {
+    if (!randomTarget) {
       return;
     }
 
 
     const status =
       document
-        .getElementById(
-          "randomStatus"
-        );
-
-
-    status.className =
-      "status";
-
-    status.textContent =
-      "登録しています...";
+        .getElementById("randomStatus");
 
 
     const success =
@@ -2288,20 +1900,12 @@
 
     randomTarget = null;
 
+    await loadData(true);
 
-    await loadData();
-
-
-    showScreen(
-      "mainScreen"
-    );
+    showScreen("mainScreen");
 
   }
 
-
-  // ==========================================
-  // 挑戦保存
-  // ==========================================
 
   async function saveChallenge(
     target,
@@ -2309,31 +1913,29 @@
     fromRandom
   ) {
 
+    statusElement.className =
+      "status";
+
+    statusElement.textContent =
+      "登録しています...";
+
+
     const {
-      data: latestProgress,
+      data: latest,
       error: checkError
     } =
       await sb
-        .from(
-          "game_progress"
-        )
+        .from("game_progress")
         .select(`
           current_target_id,
           carry_steps,
           random_current_target_id
         `)
-        .eq(
-          "user_id",
-          currentUser.id
-        )
+        .eq("user_id", currentUser.id)
         .single();
 
 
     if (checkError) {
-
-      console.error(
-        checkError
-      );
 
       statusElement.className =
         "status error";
@@ -2342,14 +1944,10 @@
         "進行状態を確認できませんでした";
 
       return false;
-
     }
 
 
-    if (
-      latestProgress
-        .current_target_id
-    ) {
+    if (latest.current_target_id) {
 
       statusElement.className =
         "status error";
@@ -2358,88 +1956,52 @@
         "すでに挑戦中の目標があります";
 
       return false;
-
     }
 
 
     if (
-      completedTargetIds
-        .has(target.id)
+      fromRandom &&
+      latest.random_current_target_id !==
+      target.id
     ) {
 
       statusElement.className =
         "status error";
 
       statusElement.textContent =
-        "この目標はすでに制覇済みです";
+        "抽選結果が一致しません";
 
       return false;
-
     }
 
 
-    // ランダムの場合、
-    // DBに固定された目標と一致しているか確認
+    if (
+      !fromRandom &&
+      latest.random_current_target_id
+    ) {
 
-    if (fromRandom) {
+      statusElement.className =
+        "status error";
 
-      if (
-        latestProgress
-          .random_current_target_id !==
-        target.id
-      ) {
+      statusElement.textContent =
+        "ランダム抽選中の目標があります";
 
-        statusElement.className =
-          "status error";
-
-        statusElement.textContent =
-          "抽選結果が一致しません";
-
-        return false;
-
-      }
-
-    }
-
-
-    // 手動なのにランダム抽選中なら禁止
-
-    if (!fromRandom) {
-
-      if (
-        latestProgress
-          .random_current_target_id
-      ) {
-
-        statusElement.className =
-          "status error";
-
-        statusElement.textContent =
-          "ランダム抽選中の目標があります";
-
-        return false;
-
-      }
-
+      return false;
     }
 
 
     const carrySteps =
       Number(
-        latestProgress
-          .carry_steps ?? 0
+        latest.carry_steps ?? 0
       );
 
 
     const {
-      error: updateError
+      error
     } =
       await sb
-        .from(
-          "game_progress"
-        )
+        .from("game_progress")
         .update({
-
           current_target_id:
             target.id,
 
@@ -2459,25 +2021,15 @@
             null,
 
           updated_at:
-            new Date()
-              .toISOString()
-
+            new Date().toISOString()
         })
-        .eq(
-          "user_id",
-          currentUser.id
-        )
-        .is(
-          "current_target_id",
-          null
-        );
+        .eq("user_id", currentUser.id)
+        .is("current_target_id", null);
 
 
-    if (updateError) {
+    if (error) {
 
-      console.error(
-        updateError
-      );
+      console.error(error);
 
       statusElement.className =
         "status error";
@@ -2486,7 +2038,6 @@
         "挑戦を開始できませんでした";
 
       return false;
-
     }
 
 
@@ -2496,36 +2047,25 @@
 
 
   // ==========================================
-  // ランダム画面から戻る
+  // 戻る
   // ==========================================
 
   function leaveRandomScreen() {
-
-    // 抽選結果そのものは消さない
-    // DBに保存されたまま
 
     randomTarget = null;
 
     updateSelectionButtons();
 
-    showScreen(
-      "mainScreen"
-    );
+    showScreen("mainScreen");
 
   }
 
-
-  // ==========================================
-  // 通常の戻る
-  // ==========================================
 
   function backToMain() {
 
     selectedTarget = null;
 
-    showScreen(
-      "mainScreen"
-    );
+    showScreen("mainScreen");
 
   }
 
@@ -2536,59 +2076,33 @@
 
     renderTargetList();
 
-    showScreen(
-      "targetScreen"
-    );
+    showScreen("targetScreen");
 
   }
 
 
   // ==========================================
-  // HTML安全化
+  // その他
   // ==========================================
 
-  function escapeHtml(
-    value
-  ) {
+  function escapeHtml(value) {
 
     return String(value)
-      .replaceAll(
-        "&",
-        "&amp;"
-      )
-      .replaceAll(
-        "<",
-        "&lt;"
-      )
-      .replaceAll(
-        ">",
-        "&gt;"
-      )
-      .replaceAll(
-        '"',
-        "&quot;"
-      )
-      .replaceAll(
-        "'",
-        "&#039;"
-      );
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
 
   }
 
 
-  // ==========================================
-  // エラー
-  // ==========================================
-
-  function showError(
-    message
-  ) {
+  function showError(message) {
 
     const status =
       document
-        .getElementById(
-          "appStatus"
-        );
+        .getElementById("appStatus");
+
 
     status.className =
       "status error";

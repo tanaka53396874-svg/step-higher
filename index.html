@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>🗼 STEP HIGHER 🏔️</title>
-  <!-- v13: scrollable wide world map; Japan and detailed Himalaya retained -->
+  <!-- v17: improved step card layout and typography -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -62,6 +62,19 @@
     .today-stat{font-size:clamp(13px,3.15vw,16px);font-weight:400}
     .today-stat .stat-value{font-weight:400;color:#263442}
     @media(max-width:390px){.card-today .big-number{font-size:clamp(27px,7.4vw,35px)}.today-layout{gap:5px}.today-side,.today-periods{padding-left:6px}}
+    /* v17: today's steps over weekly/monthly; prior periods remain on right */
+    .card-today .today-layout{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(0,1fr);gap:12px;align-items:stretch}
+    .card-today .today-left{display:flex;flex-direction:column;min-width:0;gap:15px;justify-content:space-between}
+    .card-today .today-main{min-width:0}
+    .card-today .big-number{font-size:clamp(34px,9vw,49px);letter-spacing:-1.6px;white-space:nowrap;font-variant-numeric:tabular-nums}
+    .card-today .big-number .unit{font-size:12px;letter-spacing:0;margin-left:2px}
+    .card-today .today-periods{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;border-left:0;border-top:1px solid rgba(0,0,0,.10);padding:11px 0 0}
+    .card-today .period-stat{min-width:0;display:flex;flex-direction:column;gap:5px;white-space:nowrap;font-size:10px;color:#667085}
+    .card-today .period-stat .stat-value,.card-today .today-stat .stat-value{font-size:14px;font-weight:400;color:#666;line-height:1.7;letter-spacing:-.3px;font-variant-numeric:tabular-nums}
+    .card-today .today-side{border-left:1px solid rgba(0,0,0,.10);padding-left:12px;display:flex;flex-direction:column;justify-content:space-between;gap:12px}
+    .card-today .today-stat{display:flex;flex-direction:column;gap:2px;min-width:0;white-space:nowrap}
+    .card-today .today-stat-label{font-size:11px;font-weight:500;color:#667085}
+    @media(max-width:390px){.card-today{padding-left:12px;padding-right:12px}.card-today .today-layout{grid-template-columns:minmax(0,1.65fr) minmax(0,1fr);gap:7px}.card-today .today-side{padding-left:7px}.card-today .big-number{font-size:clamp(29px,8.6vw,38px)}.card-today .period-stat .stat-value,.card-today .today-stat .stat-value{font-size:12px;letter-spacing:-.45px}.card-today .today-periods{gap:4px}}
   </style>
 </head>
 <body>
@@ -77,7 +90,7 @@
   <div id="mainScreen" class="hidden">
     <h1>🗼 STEP HIGHER 🏔️</h1><div class="subtitle">歩いて世界の建造物と山を制覇</div>
     <button id="syncStepsButton" class="sync-button" onclick="applyLatestSteps()">🔄 最新の歩数を反映</button>
-    <div class="card card-today"><div class="today-layout"><div class="today-main"><div class="label">今日の歩数</div><div class="big-number"><span id="todaySteps">0</span> <span class="unit">歩</span></div><div class="today-flights">上った階数 <span id="todayFlights">0</span>階</div></div><div class="today-periods"><div class="period-stat"><span>今週の歩数</span><strong><span id="weekSteps">0</span>歩</strong></div><div class="period-stat"><span>今月の歩数</span><strong><span id="monthSteps">0</span>歩</strong></div></div><div class="today-side"><div class="today-stat"><span class="today-stat-label">昨日</span><span class="stat-value"><span id="yesterdaySteps">0</span>歩</span></div><div class="today-stat"><span class="today-stat-label">先週</span><span class="stat-value"><span id="lastWeekSteps">0</span>歩</span></div><div class="today-stat"><span class="today-stat-label">先月</span><span class="stat-value"><span id="lastMonthSteps">0</span>歩</span></div></div></div></div>
+    <div class="card card-today"><div class="today-layout"><div class="today-left"><div class="today-main"><div class="label">今日の歩数</div><div class="big-number"><span id="todaySteps">0</span><span class="unit">歩</span></div><div class="today-flights">上った階数 <span id="todayFlights">0</span>階</div></div><div class="today-periods"><div class="period-stat"><span>今週の歩数</span><span class="stat-value"><span id="weekSteps">0</span>歩</span></div><div class="period-stat"><span>今月の歩数</span><span class="stat-value"><span id="monthSteps">0</span>歩</span></div></div></div><div class="today-side"><div class="today-stat"><span class="today-stat-label">昨日</span><span class="stat-value"><span id="yesterdaySteps">0</span>歩</span></div><div class="today-stat"><span class="today-stat-label">先週</span><span class="stat-value"><span id="lastWeekSteps">0</span>歩</span></div><div class="today-stat"><span class="today-stat-label">先月</span><span class="stat-value"><span id="lastMonthSteps">0</span>歩</span></div></div></div></div>
     <div class="card card-current"><div class="label">現在の挑戦</div><div id="currentTargetName" class="target-name">まだ選択されていません</div><div id="currentTargetInfo" class="target-info"></div>
       <div id="progressBar" class="progress-bar hidden"><div id="progressFill" class="progress-fill"></div></div><div id="floorMeterWrap" class="floor-meter-wrap hidden"><div id="floorCurrent" class="floor-current"></div><div id="floorTotal" class="floor-total"></div><div class="floor-meter"><div id="floorFill" class="floor-fill"></div></div></div>
     </div>

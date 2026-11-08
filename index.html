@@ -31,6 +31,13 @@
     .legend-dot{width:14px;height:14px;border-radius:5px;border:1px solid rgba(0,0,0,.08)}
     .history-once{background:#DDF3FF}.history-twice{background:#FFF59D}.history-three-plus{background:#FFDDE8}
     .history-count{margin-top:5px;font-size:12px;font-weight:700;color:#555}
+    .history-sort-row{display:flex;align-items:center;justify-content:flex-end;gap:8px;margin:0 0 12px;font-size:13px;color:#555}
+    .history-sort-row select{width:auto;max-width:74%;margin:0;padding:8px;border-radius:9px;border:1px solid #ddd;background:#fff;font-size:13px;color:#333}
+    .history-completion-lines{margin-top:8px;display:flex;flex-direction:column;gap:4px;font-size:12px;color:#555}
+    .history-completion-line{display:flex;flex-wrap:wrap;gap:5px 9px;align-items:baseline}
+    .history-completion-line .history-duration{font-variant-numeric:tabular-nums}
+    .history-date{white-space:normal;text-align:right}
+    @media(max-width:380px){.history-completion-lines{font-size:11px}.history-row{gap:7px}.history-date{font-size:12px}}
     .jump-row{display:flex;justify-content:flex-end;margin:-6px 2px 10px}.jump-link{border:0;background:none;padding:2px 0;margin:0;width:auto;color:#6b7280;font-size:13px;font-weight:600;text-decoration:underline;cursor:pointer}
     .today-layout{display:grid;grid-template-columns:1.25fr .9fr;gap:12px;align-items:center}.today-side{border-left:1px solid rgba(0,0,0,.10);padding-left:14px;display:flex;flex-direction:column;gap:8px}.today-stat{display:flex;justify-content:space-between;gap:8px;font-size:18px;font-weight:700}.today-stat-label{font-size:12px;color:#667085;font-weight:600;align-self:center}.today-flights{margin-top:4px;font-size:12px;color:#52606d;font-weight:700}.progress-fill,.floor-fill{transition:none}
     /* v15: compact three-column step statistics */
@@ -126,6 +133,7 @@
     <button class="secondary back-button" onclick="goBack('mainScreen')">← 戻る</button><div class="screen-title">制覇履歴</div><div class="jump-row"><button class="jump-link" onclick="scrollToBottom()">最下部へ ↓</button></div>
     <div class="section-heading">周回履歴</div><div id="cycleHistory"></div>
     <div class="section-heading">対象物の最新制覇日</div>
+    <div class="history-sort-row"><label for="historySort">並び替え</label><select id="historySort" onchange="changeHistorySort(this.value)"><option value="height">高さが低い順（従来）</option><option value="oldest">最新制覇日時が古い順</option></select></div>
     <div class="history-legend">
       <div class="legend-item"><span class="legend-dot" style="background:#fff"></span>未制覇</div>
       <div class="legend-item"><span class="legend-dot" style="background:#DDF3FF"></span>1回</div>
@@ -154,11 +162,8 @@
 <div id="clearOverlay" class="clear-overlay hidden"><div id="clearPanel" class="clear-panel"><div id="confetti" class="confetti"></div><div id="clearKicker" class="clear-kicker">🎉 CLEAR! 🎉</div><div id="clearName" class="clear-name"></div><div id="clearMeta" class="clear-meta"></div><div id="clearSpecial" class="clear-special hidden"></div><button class="primary" onclick="closeClearOverlay()">次へ</button></div></div>
 
 <script>
-  const SUPABASE_URL =
-    "https://lodgpydrwbbqnogshjir.supabase.co/";
-
-  const SUPABASE_KEY =
-    "sb_publishable_2m9HkObR_Nf_-OxtpLHb4Q_-uROIako";
+const SUPABASE_URL="ここにProject URL";
+const SUPABASE_KEY="ここにPublishable key";
 const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 let currentUser=null,gameProgress=null,allTargets=[],completedTargetIds=new Set(),selectedTarget=null,randomTarget=null,currentFilter="all",stepsAppliedThisLoad=false,mapMode="japan",himalayaMap=null,himalayaLayer=null;
 const FLOOR_COUNTS={4:48,5:73,6:60,7:73,8:64,12:72,14:78,15:102,16:80,17:88,18:68,19:86,20:101,21:88,22:98,23:101,24:85,25:108,26:98,27:88,28:66,29:95,30:88,31:94,32:95,33:81,34:87,35:98,36:101,37:108,38:101,39:101,40:109,41:111,42:94,43:123,44:115,45:120,47:128,49:118,50:163};
@@ -349,28 +354,80 @@ async function startRandomChallenge(){if(!randomTarget)return;const ok=await sav
 async function normalizeAfterChallengeStart(){await loadData(true);}
 async function saveChallenge(t,s,fromRandom){s.className="status";s.textContent="登録しています...";const{data:latest,error:checkError}=await sb.from("game_progress").select("current_target_id,random_current_target_id").eq("user_id",currentUser.id).single();if(checkError){s.className="status error";s.textContent="進行状態を確認できませんでした";return false}if(latest.current_target_id){s.className="status error";s.textContent="すでに挑戦中の目標があります";return false}if(fromRandom&&latest.random_current_target_id!==t.id){s.className="status error";s.textContent="抽選結果が一致しません";return false}if(!fromRandom&&latest.random_current_target_id){s.className="status error";s.textContent="ランダム抽選中の目標があります";return false}const{error}=await sb.rpc("start_target_challenge",{p_target_id:t.id});if(error){console.error(error);s.className="status error";s.textContent="挑戦を開始できませんでした";return false}return true;}
 async function prepareNextCycle(){const nb=document.getElementById("nextCycleButton"),s=document.getElementById("selectionStatus");nb.disabled=true;s.className="status";s.textContent="次の周回を準備しています...";const{data,error}=await sb.rpc("prepare_next_cycle");if(error){console.error(error);nb.disabled=false;s.className="status error";s.textContent="次の周回を開始できませんでした";return}stepsAppliedThisLoad=false;await loadData(true);s.className="status success";s.textContent=`${Number(data?.new_cycle??gameProgress?.cycle??1)}周目を準備しました。最初の目標に挑戦した瞬間がスタート日時になります。`;}
-async function openHistory(){showScreen("historyScreen");const status=document.getElementById("historyStatus");status.className="status";status.textContent="履歴を読み込んでいます...";const [cyclesRes,compRes]=await Promise.all([sb.from("game_cycles").select("cycle,started_at,completed_at").eq("user_id",currentUser.id).order("cycle",{ascending:true}),sb.from("target_completions").select("target_id,cycle,completed_at").eq("user_id",currentUser.id).order("completed_at",{ascending:false})]);if(cyclesRes.error||compRes.error){console.error(cyclesRes.error||compRes.error);status.className="status error";status.textContent="履歴を取得できませんでした";return}renderCycleHistory(cyclesRes.data??[]);renderLatestTargetHistory(compRes.data??[]);status.textContent="";}
+let historyRowsCache=[],historySortMode="height";
+async function fetchAllCompletions(){
+  const all=[];const batch=750;
+  for(let offset=0;offset<50000;offset+=batch){
+    const r=await sb.from("target_completions").select("target_id,cycle,completed_at").eq("user_id",currentUser.id).order("completed_at",{ascending:true}).range(offset,offset+batch-1);
+    if(r.error)throw r.error;
+    all.push(...(r.data||[]));
+    if((r.data||[]).length<batch)return all;
+  }
+  throw new Error("制覇履歴の取得件数が上限を超えました");
+}
+async function openHistory(){
+  showScreen("historyScreen");
+  const status=document.getElementById("historyStatus");
+  status.className="status";status.textContent="履歴を読み込んでいます...";
+  try{
+    const [cyclesRes,rows]=await Promise.all([
+      sb.from("game_cycles").select("cycle,started_at,completed_at").eq("user_id",currentUser.id).order("cycle",{ascending:true}),
+      fetchAllCompletions()
+    ]);
+    if(cyclesRes.error)throw cyclesRes.error;
+    historyRowsCache=rows;
+    renderCycleHistory(cyclesRes.data??[]);
+    document.getElementById("historySort").value=historySortMode;
+    renderLatestTargetHistory(historyRowsCache);
+    status.textContent="";
+  }catch(error){console.error(error);status.className="status error";status.textContent="履歴を取得できませんでした";}
+}
+function changeHistorySort(value){
+  historySortMode=value==="oldest"?"oldest":"height";
+  renderLatestTargetHistory(historyRowsCache);
+}
 function renderCycleHistory(rows){const box=document.getElementById("cycleHistory");box.innerHTML="";if(!rows.length){box.innerHTML='<div class="card empty">正式スタート前です</div>';return}for(const r of rows){const el=document.createElement("div");el.className="card";el.innerHTML=`<div class="cycle-title">${Number(r.cycle)}周目</div><div class="details">スタート日：${formatDate(r.started_at)}<br>全クリア日：${r.completed_at?formatDate(r.completed_at):"―"}</div>`;box.appendChild(el);}}
+function formatHistoryDay(value){
+  return new Intl.DateTimeFormat("ja-JP",{timeZone:"Asia/Tokyo",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date(value)).replaceAll("/","/");
+}
+function formatHistoryDuration(current,previous){
+  if(!previous||!current)return"記録なし";
+  const diff=new Date(current).getTime()-new Date(previous).getTime();
+  if(!Number.isFinite(diff)||diff<0)return"記録なし";
+  const minutes=Math.floor(diff/60000);
+  const days=Math.floor(minutes/1440),hours=Math.floor(minutes%1440/60),mins=minutes%60;
+  return `${days}日と${hours}:${String(mins).padStart(2,"0")}`;
+}
 function renderLatestTargetHistory(rows){
-  const latest=new Map(),counts=new Map();
-  for(const r of rows){
-    counts.set(r.target_id,(counts.get(r.target_id)||0)+1);
-    if(!latest.has(r.target_id))latest.set(r.target_id,r);
+  const ordered=[...rows].filter(r=>r.completed_at).sort((a,b)=>new Date(a.completed_at)-new Date(b.completed_at));
+  const records=new Map();
+  for(let i=0;i<ordered.length;i++){
+    const r=ordered[i],prev=i>0?ordered[i-1]:null;
+    if(!records.has(r.target_id))records.set(r.target_id,[]);
+    records.get(r.target_id).push({...r,duration:formatHistoryDuration(r.completed_at,prev?.completed_at)});
   }
   const box=document.getElementById("targetHistory");box.innerHTML="";
   const targets=[...allTargets].sort((a,b)=>{
-    const ad=(counts.get(a.id)||0)>0,bd=(counts.get(b.id)||0)>0;
-    if(ad!==bd)return ad?1:-1;
+    const ar=records.get(a.id)||[],br=records.get(b.id)||[];
+    if(!!ar.length!==!!br.length)return ar.length?1:-1;
+    if(ar.length&&br.length&&historySortMode==="oldest"){
+      const diff=new Date(ar[ar.length-1].completed_at)-new Date(br[br.length-1].completed_at);
+      if(diff)return diff;
+    }
     return Number(a.height_m)-Number(b.height_m)||a.id-b.id;
   });
   for(const t of targets){
-    const r=latest.get(t.id),count=counts.get(t.id)||0,el=document.createElement("div");
+    const rr=records.get(t.id)||[],count=rr.length,r=rr[count-1],el=document.createElement("div");
     let colorClass="";
     if(count===1)colorClass=" history-once";
     else if(count===2)colorClass=" history-twice";
     else if(count>=3)colorClass=" history-three-plus";
     el.className="target-item"+colorClass;
-    el.innerHTML=`<div class="history-row"><div><div class="target-item-name">${escapeHtml(targetDisplayName(t))}</div><div class="target-item-details">${t.category==="building"?"建造物":"山"}・${escapeHtml(targetCountry(t))}<br>高さ ${Number(t.height_m).toLocaleString()}m</div>${count>0?`<div class="history-count">制覇 ${count}回</div>`:""}</div><div class="history-date">${r?`最新制覇：${formatDate(r.completed_at)}`:"未制覇"}</div></div>`;
+    const recent=rr.slice(-3).reverse().map((entry,i)=>{
+      const n=count-i;
+      return `<div class="history-completion-line"><span>${n}回目</span><span>${escapeHtml(formatHistoryDay(entry.completed_at))}</span><span class="history-duration">${escapeHtml(entry.duration)}</span></div>`;
+    }).join("");
+    el.innerHTML=`<div class="history-row"><div><div class="target-item-name">${escapeHtml(targetDisplayName(t))}</div><div class="target-item-details">${t.category==="building"?"建造物":"山"}・${escapeHtml(targetCountry(t))}<br>高さ ${Number(t.height_m).toLocaleString()}m</div>${count>0?`<div class="history-count">制覇 ${count}回</div>`:""}</div><div class="history-date">${r?`最新制覇：${formatDate(r.completed_at)}`:"未制覇"}</div></div>${recent?`<div class="history-completion-lines">${recent}</div>`:""}`;
     box.appendChild(el);
   }
 }
